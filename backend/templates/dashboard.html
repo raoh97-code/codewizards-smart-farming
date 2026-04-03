@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body class="dashboard-body">
 
   <!-- Loading Overlay -->
@@ -36,12 +38,6 @@
       <div class="menu-item" data-target="view-charts">
         <i class="fa-solid fa-chart-pie"></i> Soil Charts
       </div>
-      <div class="menu-item" data-target="view-history">
-        <i class="fa-solid fa-clock-rotate-left"></i> History
-      </div>
-      <div class="menu-item" data-target="view-report">
-        <i class="fa-solid fa-file-pdf"></i> Download Report
-      </div>
       <div style="margin-top: auto;"></div>
       <div class="menu-item" id="logout-btn" style="color: #c62828; margin-top: 50px;">
         <i class="fa-solid fa-right-from-bracket"></i> Logout
@@ -51,44 +47,67 @@
 
   <!-- Main Content -->
   <main class="main-content">
-    
+
     <header class="topbar">
       <h2 style="color: var(--text-dark);">Smart Farming Dashboard</h2>
       <div style="margin-left: auto; display: flex; align-items: center; gap: 15px;">
         <span style="font-weight: 500; color: var(--text-muted);" id="user-greeting">Hello, Farmer</span>
-        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: white; display:flex; align-items:center; justify-content:center; font-weight: bold;">
+        <div
+          style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: white; display:flex; align-items:center; justify-content:center; font-weight: bold;">
           F
         </div>
       </div>
     </header>
 
     <div class="dashboard-scroll">
-      
+
       <!-- ==============================================
            VIEW: DASHBOARD OVERVIEW
            ============================================== -->
       <section id="view-dashboard" class="dashboard-view active">
-        <div class="card" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;">
+        <div class="card"
+          style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;">
           <h2 style="color: white; border-bottom: none;">Welcome to your Dashboard!</h2>
-          <p style="opacity: 0.9; margin-top: 10px;">Monitor your soil health, generate AI predictions, and download reports all in one place.</p>
-          <button class="btn btn-secondary" style="margin-top: 20px;" onclick="switchView('view-input')">Analyze Soil Now</button>
+          <p style="opacity: 0.9; margin-top: 10px;">Monitor your soil health, generate crop predictions, and download
+            reports all in one place.</p>
+          <button class="btn btn-secondary" style="margin-top: 20px;" onclick="switchView('view-input')">Analyze Soil
+            Now</button>
         </div>
 
-        <div class="grid-3">
-          <div class="card" style="text-align: center;">
-            <i class="fa-solid fa-vial" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 15px;"></i>
-            <h3>Total Tests</h3>
-            <p style="font-size: 2rem; font-weight: 700; color: var(--text-dark);">12</p>
-          </div>
-          <div class="card" style="text-align: center;">
-            <i class="fa-solid fa-seedling" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 15px;"></i>
-            <h3>Crops Grown</h3>
-            <p style="font-size: 2rem; font-weight: 700; color: var(--text-dark);">4</p>
-          </div>
-          <div class="card" style="text-align: center;">
-            <i class="fa-solid fa-heart-pulse" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 15px;"></i>
-            <h3>Avg Soil Health</h3>
-            <p style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">Good</p>
+        <div style="margin-top: 35px;">
+          <h3 style="color: var(--primary-dark); margin-bottom: 20px; font-size: 1.3rem;"><i
+              class="fa-solid fa-book-open"></i> How This Platform Works</h3>
+          <div class="grid-3">
+            <div class="card" style="padding: 25px;">
+              <div
+                style="background: rgba(30,136,229,0.1); width: 55px; height: 55px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                <i class="fa-solid fa-flask" style="color: #1e88e5; font-size: 1.8rem;"></i>
+              </div>
+              <h4 style="font-size: 1.1rem; color: #333;">1. Enter Soil Data</h4>
+              <p class="text-muted" style="margin-top: 10px; font-size: 0.95rem; line-height: 1.6;">Manually type in
+                your NPK (Nitrogen, Phosphorus, Potassium) values, environmental factors, and pH levels, or
+                automatically extract them directly from a soil test PDF report.</p>
+            </div>
+            <div class="card" style="padding: 25px;">
+              <div
+                style="background: rgba(67,160,71,0.1); width: 55px; height: 55px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                <i class="fa-solid fa-brain" style="color: #43a047; font-size: 1.8rem;"></i>
+              </div>
+              <h4 style="font-size: 1.1rem; color: #333;">2. ML-Based Processing</h4>
+              <p class="text-muted" style="margin-top: 10px; font-size: 0.95rem; line-height: 1.6;">Our advanced Machine
+                Learning algorithms map your soil profile against thousands of historical data points to predict the
+                absolute optimal crops that will thrive in your soil.</p>
+            </div>
+            <div class="card" style="padding: 25px;">
+              <div
+                style="background: rgba(251,140,0,0.1); width: 55px; height: 55px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                <i class="fa-solid fa-leaf" style="color: #fb8c00; font-size: 1.8rem;"></i>
+              </div>
+              <h4 style="font-size: 1.1rem; color: #333;">3. Actionable Insights</h4>
+              <p class="text-muted" style="margin-top: 10px; font-size: 0.95rem; line-height: 1.6;">Receive tailor-made
+                fertilizer suggestions, water requirement estimates, and highly descriptive, multi-lingual agricultural
+                summaries designed to maximize your crop yield.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -98,11 +117,11 @@
            ============================================== -->
       <section id="view-input" class="dashboard-view">
         <div class="grid-2">
-          
+
           <!-- Manual Form -->
           <div class="card">
             <h3><i class="fa-solid fa-keyboard"></i> Manual Data Entry</h3>
-            <form id="soil-form">
+            <!-- <form id="soil-form">
               <div class="input-grid">
                 <div class="form-group">
                   <label>Nitrogen (N)</label>
@@ -134,22 +153,140 @@
                 </div>
               </div>
               <button type="submit" class="btn btn-primary btn-block" style="margin-top: 10px;">Analyze Data</button>
+            </form> -->
+            <form id="manualForm" novalidate>
+              <div class="row g-3 p-4">
+
+                <div class="col-12">
+                  <label class="form-section-label"><i class="bi bi-layers me-1"></i>Soil Classification <span
+                      class="text-danger">*</span></label>
+                </div>
+                <div class="col-md-12">
+                  <label for="manualSoilType" class="form-label">Select Soil Type</label>
+                  <select id="manualSoilType" name="soil_type" class="form-select custom-input" required>
+                    <option value="" disabled selected>Choose a soil type...</option>
+                    <option value="alluvial">Alluvial</option>
+                    <option value="black">Black</option>
+                    <option value="red">Red</option>
+                    <option value="clay">Clay</option>
+                    <option value="laterite">Laterite</option>
+                    <option value="desert">Desert</option>
+                    <option value="loamy">Loamy</option>
+                  </select>
+                  <div class="invalid-feedback">Please select a soil type.</div>
+                </div>
+
+                <div class="col-12 mt-4">
+                  <label class="form-section-label"><i class="bi bi-graph-up me-1"></i>Base Nutrient Levels (kg/ha)
+                    <span class="text-danger">*</span></label>
+                </div>
+                <div class="col-md-4">
+                  <label for="nitrogen" class="form-label">Nitrogen (N)</label>
+                  <div class="input-group-custom">
+                    <span class="input-icon"><i class="bi bi-circle-fill text-success-muted"></i></span>
+                    <input type="number" id="nitrogen" class="form-control custom-input" placeholder="e.g. 90"
+                      required />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label for="phosphorus" class="form-label">Phosphorus (P)</label>
+                  <div class="input-group-custom">
+                    <span class="input-icon"><i class="bi bi-circle-fill text-warning-muted"></i></span>
+                    <input type="number" id="phosphorus" class="form-control custom-input" placeholder="e.g. 40"
+                      required />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label for="potassium" class="form-label">Potassium (K)</label>
+                  <div class="input-group-custom">
+                    <span class="input-icon"><i class="bi bi-circle-fill text-info-muted"></i></span>
+                    <input type="number" id="potassium" class="form-control custom-input" placeholder="e.g. 40"
+                      required />
+                  </div>
+                </div>
+
+                <div class="col-12 mt-4">
+                  <label class="form-section-label"><i class="bi bi-thermometer-half me-1"></i>Environmental Conditions
+                    <span class="text-danger">*</span></label>
+                </div>
+                <div class="col-md-6">
+                  <label for="ph" class="form-label">pH Level</label>
+                  <input type="number" id="ph" class="form-control custom-input" placeholder="e.g. 6.5" step="0.1"
+                    required />
+                </div>
+                <div class="col-md-6">
+                  <label for="temperature" class="form-label">Temperature (°C)</label>
+                  <input type="number" id="temperature" class="form-control custom-input" placeholder="e.g. 25"
+                    required />
+                </div>
+                <div class="col-md-6">
+                  <label for="humidity" class="form-label">Humidity (%)</label>
+                  <input type="number" id="humidity" class="form-control custom-input" placeholder="e.g. 80" required />
+                </div>
+                <div class="col-md-6">
+                  <label for="rainfall" class="form-label">Rainfall (mm)</label>
+                  <input type="number" id="rainfall" class="form-control custom-input" placeholder="e.g. 200"
+                    required />
+                </div>
+
+                <div class="col-12 mt-4">
+                  <label class="form-section-label"><i class="bi bi-plus-circle me-1"></i>Additional Micronutrients
+                    (Optional)</label>
+                  <p class="text-muted small mb-3">Provide any known values to improve recommendation accuracy through
+                    bonus points.</p>
+                </div>
+
+                <div class="row g-2">
+                  <div class="col-md-3 col-6"><label class="form-label small">Magnesium (Mg)</label><input type="number"
+                      id="manMg" step="0.01" class="form-control custom-input form-control-sm"></div>
+                  <div class="col-md-3 col-6"><label class="form-label small">Calcium (Ca)</label><input type="number"
+                      id="manCa" step="0.01" class="form-control custom-input form-control-sm"></div>
+                  <div class="col-md-3 col-6"><label class="form-label small">Sulfur (S)</label><input type="number"
+                      id="manS" step="0.01" class="form-control custom-input form-control-sm"></div>
+                  <div class="col-md-3 col-6"><label class="form-label small">Iron (Fe)</label><input type="number"
+                      id="manFe" step="0.01" class="form-control custom-input form-control-sm"></div>
+                  <div class="col-md-4 col-6 mt-2"><label class="form-label small">Manganese (Mn)</label><input
+                      type="number" id="manMn" step="0.01" class="form-control custom-input form-control-sm"></div>
+                  <div class="col-md-4 col-6 mt-2"><label class="form-label small">Zinc (Zn)</label><input type="number"
+                      id="manZn" step="0.01" class="form-control custom-input form-control-sm"></div>
+                  <div class="col-md-4 col-12 mt-2"><label class="form-label small">Copper (Cu)</label><input
+                      type="number" id="manCu" step="0.01" class="form-control custom-input form-control-sm"></div>
+                </div>
+
+                <div class="col-12 mt-4">
+                  <button type="submit" id="manualSubmitBtn" class="btn btn-analyze w-100">
+                    <span class="btn-text"><i class="bi bi-cpu me-2"></i>Analyze Soil</span>
+                    <span class="btn-spinner d-none">
+                      <span class="spinner-border spinner-border-sm me-2" role="status"
+                        aria-hidden="true"></span>Analyzing…
+                    </span>
+                  </button>
+                </div>
+
+                <div class="col-12">
+                  <div id="manualError" class="alert alert-danger d-none mt-2" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i><span id="manualErrorMsg"></span>
+                  </div>
+                </div>
+              </div>
             </form>
           </div>
 
           <!-- Document Upload -->
           <div class="card">
             <h3><i class="fa-solid fa-cloud-arrow-up"></i> Upload Document</h3>
-            <p class="text-muted" style="margin-bottom: 20px;">Upload a lab report PDF or Image to automatically extract soil parameters.</p>
-            
+            <p class="text-muted" style="margin-bottom: 20px;">Upload a lab report PDF or Image to automatically extract
+              soil parameters.</p>
+
             <form id="upload-form">
               <label for="file-upload" class="file-upload" style="display: block;">
                 <i class="fa-solid fa-file-pdf" style="font-size: 3rem; color: #e53935; margin-bottom: 15px;"></i><br>
                 <span id="file-name" style="font-weight: 500;">Click to select PDF or Image</span>
               </label>
               <input type="file" id="file-upload" name="file" accept=".pdf, .jpg, .png" style="display: none;">
-              
-              <button type="submit" class="btn btn-secondary btn-block" style="margin-top: 20px;">Extract & Analyze</button>
+
+              <button type="submit" class="btn btn-secondary btn-block" style="margin-top: 20px;">Extract &
+                Analyze</button>
             </form>
             <div id="upload-error" class="error-message" style="margin-top: 15px; display: none;"></div>
           </div>
@@ -161,9 +298,9 @@
            ============================================== -->
       <section id="view-result" class="dashboard-view">
         <div class="card">
-          <h3><i class="fa-solid fa-wand-magic-sparkles"></i> AI Recommendation</h3>
+          <h3><i class="fa-solid fa-wand-magic-sparkles"></i> Crop Recommendation</h3>
           <p class="text-muted" style="margin-bottom: 30px;">Based on your soil data, here is the optimum strategy.</p>
-          
+
           <div class="grid-3">
             <div class="result-card">
               <i class="fa-solid fa-heart-pulse"></i>
@@ -184,21 +321,51 @@
 
           <div class="grid-2" style="margin-top: 30px;">
             <div class="card" style="box-shadow: none; border: 1px solid #eee;">
-              <h4 style="color: var(--primary-dark); margin-bottom: 10px;"><i class="fa-solid fa-lightbulb"></i> Suggestions & Actions</h4>
-              <p id="res-suggest" style="color: var(--text-muted);">Add organic compost to improve soil moisture retention.</p>
+              <h4 style="color: var(--primary-dark); margin-bottom: 10px;"><i class="fa-solid fa-lightbulb"></i>
+                Suggestions & Actions</h4>
+              <p id="res-suggest" style="color: var(--text-muted);">Add organic compost to improve soil moisture
+                retention.</p>
             </div>
             <div class="grid-2">
               <div class="card" style="box-shadow: none; border: 1px solid #eee; text-align: center; margin-bottom: 0;">
                 <h4 style="color: var(--text-muted); font-size: 0.9rem;">Water Requirement</h4>
-                <p id="res-water" style="font-weight: bold; font-size: 1.1rem; color: #0288d1; margin-top: 5px;">Medium</p>
+                <p id="res-water" style="font-weight: bold; font-size: 1.1rem; color: #0288d1; margin-top: 5px;">Medium
+                </p>
               </div>
               <div class="card" style="box-shadow: none; border: 1px solid #eee; text-align: center; margin-bottom: 0;">
                 <h4 style="color: var(--text-muted); font-size: 0.9rem;">Best Season</h4>
-                <p id="res-season" style="font-weight: bold; font-size: 1.1rem; color: #388e3c; margin-top: 5px;">Winter</p>
+                <p id="res-season" style="font-weight: bold; font-size: 1.1rem; color: #388e3c; margin-top: 5px;">Winter
+                </p>
               </div>
             </div>
           </div>
         </div>
+
+        <!-- ================================================
+             Simple Explanation Card  (content filled by JS)
+             ================================================ -->
+        <div class="card simple-explain-card mt-4" id="simple-explanation-card"
+          style="display:none; border: 1px solid #c8e6c9;">
+          <h3 style="color: #2e7d32; margin-bottom: 5px;"><i class="fa-solid fa-seedling"></i> Simple Explanation</h3>
+          <p class="text-muted" style="margin-bottom: 18px; font-size: 0.9rem;">
+            A plain-language summary of your soil and what it means for your farm.
+          </p>
+          <div id="simple-explanation-content" style="color: #424242;">
+            <!-- Populated by generateSimpleExplanation() in app.js -->
+          </div>
+          <div id="translation-controls"
+            style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #c8e6c9; display: flex; gap: 8px;">
+            <span style="font-size: 0.85rem; color: #2e7d32; display: flex; align-items: center; margin-right: 5px;"><i
+                class="fa-solid fa-language me-1"></i> Translate:</span>
+            <button class="btn btn-sm btn-outline-success" style="padding: 2px 10px; font-size: 0.8rem;"
+              onclick="translateExplanation('en')">English</button>
+            <button class="btn btn-sm btn-outline-success" style="padding: 2px 10px; font-size: 0.8rem;"
+              onclick="translateExplanation('hi')">हिंदी</button>
+            <button class="btn btn-sm btn-outline-success" style="padding: 2px 10px; font-size: 0.8rem;"
+              onclick="translateExplanation('gu')">ગુજરાતી</button>
+          </div>
+        </div>
+
       </section>
 
       <!-- ==============================================
@@ -221,72 +388,11 @@
         </div>
       </section>
 
-      <!-- ==============================================
-           VIEW: HISTORY
-           ============================================== -->
-      <section id="view-history" class="dashboard-view">
-        <div class="card">
-          <h3><i class="fa-solid fa-clock-rotate-left"></i> Previous Analysis Reports</h3>
-          <div class="table-responsive">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Soil Health</th>
-                  <th>Recommended Crop</th>
-                  <th>Fertilizer</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="history-table-body">
-                <!-- Dummy data for now -->
-                <tr>
-                  <td>2026-03-15</td>
-                  <td><span class="badge good">Good</span></td>
-                  <td><strong>Wheat</strong></td>
-                  <td>Urea</td>
-                  <td><button class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8rem;">Download PDF</button></td>
-                </tr>
-                <tr>
-                  <td>2025-10-10</td>
-                  <td><span class="badge warning">Moderate</span></td>
-                  <td><strong>Rice</strong></td>
-                  <td>NPK 10-26-26</td>
-                  <td><button class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8rem;">Download PDF</button></td>
-                </tr>
-                <tr>
-                  <td>2025-06-01</td>
-                  <td><span class="badge danger">Poor</span></td>
-                  <td><strong>Cotton</strong></td>
-                  <td>SSP</td>
-                  <td><button class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8rem;">Download PDF</button></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ==============================================
-           VIEW: DOWNLOAD REPORT
-           ============================================== -->
-      <section id="view-report" class="dashboard-view">
-        <div class="card" style="text-align: center; padding: 50px 20px;">
-          <i class="fa-solid fa-file-pdf" style="font-size: 4rem; color: #e53935; margin-bottom: 20px;"></i>
-          <h2>Download Comprehensive Report</h2>
-          <p class="text-muted" style="margin-bottom: 30px; max-width: 500px; margin-inline: auto;">Get a detailed PDF document containing all your soil metrics, charts, and actionable AI recommendations to print or share with agronomists.</p>
-          
-          <div style="display: flex; gap: 15px; justify-content: center;">
-            <button class="btn btn-primary" onclick="alert('Downloading Data-Driven Soil Report...')"><i class="fa-solid fa-download"></i> Download PDF</button>
-            <button class="btn btn-secondary" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Report</button>
-          </div>
-        </div>
-      </section>
-
     </div>
   </main>
 
   <!-- Notice we do not need axios CDN here because we use native fetch() in our new app.js -->
-  <script src="{{ url_for('static', filename='app.js') }}"></script>
+  <script src="{{ url_for('static', filename='app.js') }}?v=2"></script>
 </body>
+
 </html>
