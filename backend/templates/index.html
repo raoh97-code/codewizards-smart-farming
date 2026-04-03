@@ -1,370 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Smart Farming Advisor | Soil Analysis System</title>
-  <meta name="description" content="Analyze your soil data to get intelligent crop recommendations, fertilizer advice, and actionable farming insights." />
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-
-  <!-- Bootstrap 5 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-  <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Farming Assistant</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-  <!-- ===== NAVBAR ===== -->
-  <nav class="navbar navbar-expand-lg navbar-dark sticky-top" id="mainNavbar">
-    <div class="container">
-      <a class="navbar-brand d-flex align-items-center gap-2" href="#">
-        <span class="brand-icon"><i class="bi bi-flower1"></i></span>
-        <span class="brand-text">Smart Farming Advisor</span>
-      </a>
-      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav ms-auto gap-1 align-items-lg-center">
-          <li class="nav-item"><a class="nav-link" href="#analyzer">Analyze Soil</a></li>
-          <li class="nav-item"><a class="nav-link" href="#results">Results</a></li>
-          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-          <li class="nav-item">
-            <a class="btn btn-outline-light btn-sm ms-lg-3" href="#analyzer">Get Started &rarr;</a>
-          </li>
-        </ul>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <div class="logo">
+        <i class="fa-solid fa-leaf"></i> SmartFarm
+      </div>
+      <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#benefits">Benefits</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="nav-buttons">
+        <a href="/login" class="btn btn-secondary">Login</a>
+        <a href="/signup" class="btn btn-primary">Sign Up</a>
       </div>
     </div>
   </nav>
 
-  <!-- ===== HERO SECTION ===== -->
-  <section class="hero-section" id="hero">
-    <div class="hero-overlay"></div>
-    <div class="container position-relative z-1">
-      <div class="row justify-content-center text-center">
-        <div class="col-lg-8">
-          <span class="badge-pill mb-3">
-            <i class="bi bi-stars"></i> AI-Powered Soil Intelligence
-          </span>
-          <h1 class="hero-title">Analyze Your Soil,<br /><span class="gradient-text">Grow Better Crops</span></h1>
-          <p class="hero-subtitle">
-            Enter your soil parameters or upload a soil report PDF to receive intelligent crop recommendations,
-            fertilizer guidance, and actionable soil health insights — all in seconds.
-          </p>
-          <div class="hero-cta d-flex flex-wrap justify-content-center gap-3 mt-4">
-            <a href="#analyzer" id="ctaManual" class="btn btn-primary-custom btn-lg px-4 py-2" onclick="switchMode('manual')">
-              <i class="bi bi-pencil-square me-2"></i>Manual Entry
-            </a>
-            <a href="#analyzer" id="ctaPdf" class="btn btn-outline-custom btn-lg px-4 py-2" onclick="switchMode('pdf')">
-              <i class="bi bi-file-earmark-pdf me-2"></i>Upload PDF
-            </a>
-          </div>
-        </div>
+  <!-- Hero Section -->
+  <section id="home" class="hero-section">
+    <div class="container">
+      <h1>Turning Soil Data into <br> Smart Farming Decisions</h1>
+      <p>AI-powered soil analysis platform that recommends the best crops, fertilizers, and soil improvements to increase productivity and promote sustainable farming.</p>
+      <div class="hero-buttons" style="display:flex; justify-content:center; gap: 20px;">
+        <a href="/signup" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">Get Started</a>
+        <a href="#features" class="btn btn-secondary" style="padding: 1rem 2rem; font-size: 1.1rem;">Learn More</a>
       </div>
     </div>
-    <!-- Floating stats -->
-    <div class="container position-relative z-1 mt-5">
-      <div class="row g-3 justify-content-center">
-        <div class="col-6 col-md-3">
-          <div class="stat-card text-center">
-            <div class="stat-icon"><i class="bi bi-droplet-half"></i></div>
-            <div class="stat-value">7</div>
-            <div class="stat-label">Soil Parameters</div>
-          </div>
+  </section>
+
+  <!-- Problem Section -->
+  <section class="section-padding bg-white">
+    <div class="container split-flex">
+      <div class="split-content">
+        <h2>The Farming Challenge</h2>
+        <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 1.1rem;">Modern agriculture faces a hidden crisis below the surface.</p>
+        <ul>
+          <li><i class="fa-solid fa-xmark"></i> Farmers receive complex, hard-to-read soil lab reports.</li>
+          <li><i class="fa-solid fa-xmark"></i> Difficulty understanding optimal soil nutrient balance.</li>
+          <li><i class="fa-solid fa-xmark"></i> Wrong crop selection leading to severe financial losses.</li>
+          <li><i class="fa-solid fa-xmark"></i> Excess fertilizer usage causing soil degradation and pollution.</li>
+        </ul>
+      </div>
+      <div class="split-img">
+        <img src="https://images.unsplash.com/photo-1592982537447-6f2a6a0c5cff?w=600&auto=format&fit=crop" alt="Degraded Soil">
+      </div>
+    </div>
+  </section>
+
+  <!-- Solution Section -->
+  <section class="section-padding" style="background-color: var(--light-green);">
+    <div class="container split-flex" style="flex-direction: row-reverse;">
+      <div class="split-content">
+        <h2>Our AI Solution</h2>
+        <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 1.1rem;">Making agriculture data-driven, sustainable, and highly profitable.</p>
+        <ul>
+          <li><i class="fa-solid fa-check"></i> Upload your soil report directly (PDF/Image).</li>
+          <li><i class="fa-solid fa-check"></i> AI automatically analyzes underlying soil nutrients.</li>
+          <li><i class="fa-solid fa-check"></i> Get highly accurate Crop & Fertilizer recommendations.</li>
+          <li><i class="fa-solid fa-check"></i> Visualize soil health through intuitive charts.</li>
+          <li><i class="fa-solid fa-check"></i> Download comprehensive structured PDF reports.</li>
+        </ul>
+      </div>
+      <div class="split-img">
+        <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=600&auto=format&fit=crop" alt="Smart Farming">
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section id="features" class="section-padding bg-white">
+    <div class="container">
+      <h2 class="section-title">Core Features</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <i class="fa-solid fa-microscope feature-icon"></i>
+          <h3>Soil Health Analysis</h3>
+          <p class="text-muted">In-depth breakdown of NPK values and soil acidity to determine overall land fertility.</p>
         </div>
-        <div class="col-6 col-md-3">
-          <div class="stat-card text-center">
-            <div class="stat-icon"><i class="bi bi-tree"></i></div>
-            <div class="stat-value">22+</div>
-            <div class="stat-label">Crop Insights</div>
-          </div>
+        <div class="feature-card">
+          <i class="fa-solid fa-seedling feature-icon"></i>
+          <h3>Crop Recommendation</h3>
+          <p class="text-muted">Machine learning models predict the highest-yield crops suitable for your exact soil parameters.</p>
         </div>
-        <div class="col-6 col-md-3">
-          <div class="stat-card text-center">
-            <div class="stat-icon"><i class="bi bi-lightning-charge"></i></div>
-            <div class="stat-value">&lt;2s</div>
-            <div class="stat-label">Analysis Speed</div>
-          </div>
+        <div class="feature-card">
+          <i class="fa-solid fa-flask feature-icon"></i>
+          <h3>Fertilizer Advisory</h3>
+          <p class="text-muted">Get precise fertilizer types and quantities to apply, preventing over-fertilization.</p>
         </div>
-        <div class="col-6 col-md-3">
-          <div class="stat-card text-center">
-            <div class="stat-icon"><i class="bi bi-shield-check"></i></div>
-            <div class="stat-value">99%</div>
-            <div class="stat-label">Accuracy Rate</div>
-          </div>
+        <div class="feature-card">
+          <i class="fa-solid fa-chart-pie feature-icon"></i>
+          <h3>Nutrient Visualization</h3>
+          <p class="text-muted">Interactive charts and graphs to help you visually understand your soil composition.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fa-solid fa-file-pdf feature-icon"></i>
+          <h3>PDF Generation</h3>
+          <p class="text-muted">Instantly generate and download professional PDF reports of your soil analysis.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fa-solid fa-clock-rotate-left feature-icon"></i>
+          <h3>History Tracking</h3>
+          <p class="text-muted">Keep a permanent digital log of all your historical soil tests and field improvements.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== ANALYZER SECTION ===== -->
-  <section class="analyzer-section py-5" id="analyzer">
+  <!-- How it Works -->
+  <section id="how-it-works" class="section-padding" style="background-color: var(--light-green);">
     <div class="container">
-      <div class="section-header text-center mb-5">
-        <span class="section-tag">Soil Analyzer</span>
-        <h2 class="section-title">Start Your Analysis</h2>
-        <p class="section-subtitle">Choose how you'd like to provide your soil data</p>
-      </div>
-
-      <!-- Mode Toggle Tabs -->
-      <div class="mode-tabs d-flex justify-content-center mb-5" role="tablist">
-        <button id="tabManual" class="mode-tab active" onclick="switchMode('manual')" role="tab" aria-selected="true">
-          <i class="bi bi-pencil-square me-2"></i>Manual Entry
-        </button>
-        <button id="tabPdf" class="mode-tab" onclick="switchMode('pdf')" role="tab" aria-selected="false">
-          <i class="bi bi-file-pdf me-2"></i>PDF Upload
-        </button>
-      </div>
-
-      <div class="row justify-content-center">
-        <div class="col-lg-7">
-
-          <!-- ---- MANUAL ENTRY FORM ---- -->
-          <div id="manualPanel" class="form-panel">
-            <div class="form-card">
-              <div class="form-card-header">
-                <i class="bi bi-clipboard-data me-2"></i>Enter Soil Parameters
-              </div>
-              <form id="manualForm" novalidate>
-                <div class="row g-3 p-4">
-
-                  <!-- NPK Row -->
-                  <div class="col-12">
-                    <label class="form-section-label"><i class="bi bi-graph-up me-1"></i>Nutrient Levels (kg/ha)</label>
-                  </div>
-                  <div class="col-md-4">
-                    <label for="nitrogen" class="form-label">Nitrogen (N)</label>
-                    <div class="input-group-custom">
-                      <span class="input-icon"><i class="bi bi-circle-fill text-success-muted"></i></span>
-                      <input type="number" id="nitrogen" name="nitrogen" class="form-control custom-input" placeholder="e.g. 90" min="0" max="500" required />
-                    </div>
-                    <div class="invalid-feedback">Enter a valid Nitrogen value (0–500).</div>
-                  </div>
-                  <div class="col-md-4">
-                    <label for="phosphorus" class="form-label">Phosphorus (P)</label>
-                    <div class="input-group-custom">
-                      <span class="input-icon"><i class="bi bi-circle-fill text-warning-muted"></i></span>
-                      <input type="number" id="phosphorus" name="phosphorus" class="form-control custom-input" placeholder="e.g. 40" min="0" max="500" required />
-                    </div>
-                    <div class="invalid-feedback">Enter a valid Phosphorus value (0–500).</div>
-                  </div>
-                  <div class="col-md-4">
-                    <label for="potassium" class="form-label">Potassium (K)</label>
-                    <div class="input-group-custom">
-                      <span class="input-icon"><i class="bi bi-circle-fill text-info-muted"></i></span>
-                      <input type="number" id="potassium" name="potassium" class="form-control custom-input" placeholder="e.g. 40" min="0" max="500" required />
-                    </div>
-                    <div class="invalid-feedback">Enter a valid Potassium value (0–500).</div>
-                  </div>
-
-                  <!-- Environmental Row -->
-                  <div class="col-12 mt-2">
-                    <label class="form-section-label"><i class="bi bi-thermometer-half me-1"></i>Environmental Conditions</label>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="ph" class="form-label">pH Level</label>
-                    <input type="number" id="ph" name="ph" class="form-control custom-input" placeholder="e.g. 6.5" min="0" max="14" step="0.1" required />
-                    <div class="invalid-feedback">pH must be between 0 and 14.</div>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="temperature" class="form-label">Temperature (°C)</label>
-                    <input type="number" id="temperature" name="temperature" class="form-control custom-input" placeholder="e.g. 25" min="-20" max="60" required />
-                    <div class="invalid-feedback">Enter a valid temperature (−20 to 60°C).</div>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="humidity" class="form-label">Humidity (%)</label>
-                    <input type="number" id="humidity" name="humidity" class="form-control custom-input" placeholder="e.g. 80" min="0" max="100" required />
-                    <div class="invalid-feedback">Humidity must be between 0 and 100%.</div>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="rainfall" class="form-label">Rainfall (mm)</label>
-                    <input type="number" id="rainfall" name="rainfall" class="form-control custom-input" placeholder="e.g. 200" min="0" max="5000" required />
-                    <div class="invalid-feedback">Enter a valid rainfall value (0–5000 mm).</div>
-                  </div>
-
-                  <!-- Submit -->
-                  <div class="col-12 mt-2">
-                    <button type="submit" id="manualSubmitBtn" class="btn btn-analyze w-100">
-                      <span class="btn-text"><i class="bi bi-cpu me-2"></i>Analyze Soil</span>
-                      <span class="btn-spinner d-none">
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Analyzing…
-                      </span>
-                    </button>
-                  </div>
-
-                  <!-- Error Alert -->
-                  <div class="col-12">
-                    <div id="manualError" class="alert alert-danger d-none" role="alert">
-                      <i class="bi bi-exclamation-triangle-fill me-2"></i><span id="manualErrorMsg"></span>
-                    </div>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          <!-- ---- PDF UPLOAD PANEL ---- -->
-          <div id="pdfPanel" class="form-panel d-none">
-            <div class="form-card">
-              <div class="form-card-header">
-                <i class="bi bi-file-earmark-pdf me-2"></i>Upload Soil Report PDF
-              </div>
-              <form id="pdfForm" novalidate>
-                <div class="p-4">
-                  <!-- Drop zone -->
-                  <div class="drop-zone" id="dropZone">
-                    <div class="drop-zone-icon"><i class="bi bi-cloud-arrow-up"></i></div>
-                    <div class="drop-zone-title">Drag &amp; Drop your PDF here</div>
-                    <div class="drop-zone-sub">or click to browse files</div>
-                    <input type="file" id="pdfFile" name="pdfFile" accept=".pdf" class="drop-zone-input" required />
-                  </div>
-                  <div id="fileInfo" class="file-info d-none">
-                    <i class="bi bi-file-earmark-pdf-fill text-danger me-2"></i>
-                    <span id="fileName"></span>
-                    <button type="button" class="btn-clear-file ms-2" id="clearFile" aria-label="Remove file">
-                      <i class="bi bi-x-circle"></i>
-                    </button>
-                  </div>
-                  <div id="pdfFileError" class="invalid-feedback-custom d-none">
-                    <i class="bi bi-exclamation-triangle me-1"></i>Please select a valid PDF file.
-                  </div>
-
-                  <button type="submit" id="pdfSubmitBtn" class="btn btn-analyze w-100 mt-4">
-                    <span class="btn-text"><i class="bi bi-upload me-2"></i>Upload &amp; Analyze</span>
-                    <span class="btn-spinner d-none">
-                      <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Uploading &amp; Analyzing…
-                    </span>
-                  </button>
-
-                  <div id="pdfError" class="alert alert-danger d-none mt-3" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i><span id="pdfErrorMsg"></span>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-
+      <h2 class="section-title">How It Works</h2>
+      <div class="steps-container">
+        <div class="step-box">
+          <div class="step-number">1</div>
+          <h4>Input Data</h4>
+          <p class="text-muted" style="font-size: 0.9rem; margin-top: 10px;">Enter soil data manually or upload your soil test report PDF.</p>
+        </div>
+        <div class="step-box">
+          <div class="step-number">2</div>
+          <h4>AI Processing</h4>
+          <p class="text-muted" style="font-size: 0.9rem; margin-top: 10px;">Our machine learning algorithms process your soil parameters.</p>
+        </div>
+        <div class="step-box">
+          <div class="step-number">3</div>
+          <h4>Get Insights</h4>
+          <p class="text-muted" style="font-size: 0.9rem; margin-top: 10px;">Receive exact crop and fertilizer recommendations instantly.</p>
+        </div>
+        <div class="step-box">
+          <div class="step-number">4</div>
+          <h4>Download</h4>
+          <p class="text-muted" style="font-size: 0.9rem; margin-top: 10px;">Save the detailed analysis as a PDF and track history.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== RESULTS SECTION ===== -->
-  <section class="results-section py-5 d-none" id="results">
+  <!-- Trusted Banner -->
+  <section class="trusted-banner">
     <div class="container">
-      <div class="section-header text-center mb-5">
-        <span class="section-tag">Analysis Complete</span>
-        <h2 class="section-title">Your Soil Report</h2>
-        <p class="section-subtitle">Here are your personalized farming recommendations</p>
-      </div>
-
-      <div class="row g-4" id="resultsGrid">
-
-        <!-- Crop Recommendation -->
-        <div class="col-md-6">
-          <div class="result-card result-card--crop h-100">
-            <div class="result-card-icon"><i class="bi bi-tree-fill"></i></div>
-            <h4 class="result-card-title">Crop Recommendation</h4>
-            <p class="result-card-body" id="resCropRecommendation">—</p>
-          </div>
-        </div>
-
-        <!-- Fertilizer Advice -->
-        <div class="col-md-6">
-          <div class="result-card result-card--fertilizer h-100">
-            <div class="result-card-icon"><i class="bi bi-droplet-fill"></i></div>
-            <h4 class="result-card-title">Fertilizer Advice</h4>
-            <p class="result-card-body" id="resFertilizerAdvice">—</p>
-          </div>
-        </div>
-
-        <!-- Soil Health -->
-        <div class="col-md-6">
-          <div class="result-card result-card--health h-100">
-            <div class="result-card-icon"><i class="bi bi-heart-pulse-fill"></i></div>
-            <h4 class="result-card-title">Soil Health Analysis</h4>
-            <p class="result-card-body" id="resSoilHealth">—</p>
-          </div>
-        </div>
-
-        <!-- Suggestions -->
-        <div class="col-md-6">
-          <div class="result-card result-card--suggestions h-100">
-            <div class="result-card-icon"><i class="bi bi-lightbulb-fill"></i></div>
-            <h4 class="result-card-title">Suggestions &amp; Tips</h4>
-            <p class="result-card-body" id="resSuggestions">—</p>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Analyze Again Button -->
-      <div class="text-center mt-5">
-        <button class="btn btn-outline-green" id="analyzeAgainBtn">
-          <i class="bi bi-arrow-counterclockwise me-2"></i>Analyze Another Sample
-        </button>
-      </div>
+      <h2>Designed for Smart and Sustainable Agriculture</h2>
+      <p style="font-size: 1.2rem; opacity: 0.9;">Helping Farmers Make Data-Driven Decisions Across the Globe</p>
     </div>
   </section>
 
-  <!-- ===== ABOUT SECTION ===== -->
-  <section class="about-section py-5" id="about">
+  <!-- Footer -->
+  <footer id="contact" class="footer">
     <div class="container">
-      <div class="row align-items-center g-5">
-        <div class="col-lg-6">
-          <span class="section-tag">About the System</span>
-          <h2 class="section-title mt-2">Intelligent Farming Starts with Data</h2>
-          <p class="about-text">
-            The Smart Farming Advisor uses advanced soil analysis algorithms to help farmers make
-            data-driven decisions. By analyzing key soil parameters — Nitrogen, Phosphorus, Potassium,
-            pH, temperature, humidity, and rainfall — our system generates precise, localized
-            recommendations.
-          </p>
-          <ul class="about-features">
-            <li><i class="bi bi-check-circle-fill"></i> Evidence-based crop selection</li>
-            <li><i class="bi bi-check-circle-fill"></i> Optimized fertilizer usage to reduce waste</li>
-            <li><i class="bi bi-check-circle-fill"></i> Soil health monitoring &amp; trend analysis</li>
-            <li><i class="bi bi-check-circle-fill"></i> Supports both manual input and PDF reports</li>
+      <div class="footer-grid">
+        <div>
+          <h3 style="display:flex; align-items:center; gap: 10px;">
+            <i class="fa-solid fa-leaf" style="color:var(--primary);"></i> SmartFarm
+          </h3>
+          <p style="color: #999; font-size: 0.95rem;">Empowering the future of agriculture through artificial intelligence and comprehensive data science.</p>
+        </div>
+        <div>
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="/login">Login</a></li>
           </ul>
         </div>
-        <div class="col-lg-6">
-          <div class="about-param-grid">
-            <div class="param-chip"><span class="param-label">Nitrogen</span><span class="param-unit">kg/ha</span></div>
-            <div class="param-chip"><span class="param-label">Phosphorus</span><span class="param-unit">kg/ha</span></div>
-            <div class="param-chip"><span class="param-label">Potassium</span><span class="param-unit">kg/ha</span></div>
-            <div class="param-chip"><span class="param-label">pH Level</span><span class="param-unit">0–14</span></div>
-            <div class="param-chip"><span class="param-label">Temperature</span><span class="param-unit">°C</span></div>
-            <div class="param-chip"><span class="param-label">Humidity</span><span class="param-unit">%</span></div>
-            <div class="param-chip param-chip--wide"><span class="param-label">Rainfall</span><span class="param-unit">mm / year</span></div>
-          </div>
+        <div>
+          <h3>Contact & Team</h3>
+          <ul style="color: #999;">
+            <li>Team CodeWizards</li>
+            <li>Craftathon GU Hackathon Project</li>
+            <li>hello@smartfarm.ai</li>
+            <li style="margin-top: 10px; font-size: 1.5rem; display:flex; gap: 15px;">
+              <i class="fa-brands fa-github"></i>
+              <i class="fa-brands fa-twitter"></i>
+              <i class="fa-brands fa-linkedin"></i>
+            </li>
+          </ul>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- ===== FOOTER ===== -->
-  <footer class="site-footer py-4">
-    <div class="container text-center">
-      <div class="footer-brand mb-2">
-        <i class="bi bi-flower1 me-2"></i>Smart Farming Advisor
+      <div class="footer-bottom">
+        <p>&copy; 2026 Smart Farming Assistant. All rights reserved.</p>
       </div>
-      <p class="footer-text">
-        Built for CodeWizards Hackathon &bull; Soil Analysis System &bull; &copy; 2026
-      </p>
     </div>
   </footer>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- Custom JS -->
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
