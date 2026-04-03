@@ -5,18 +5,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --primary: #2e7d32;
-  --light-green: #e8f5e9;
-  --dark-green: #1b5e20;
-  --bg-color: #f5f5f5;
-  --text-dark: #333333;
-  --text-muted: #666666;
+  --primary: #388E3C; /* Balanced Grass Green */
+  --primary-light: #E8F5E9;
+  --primary-dark: #1B5E20;
+  --secondary: #8D6E63; /* Soil Brown */
+  --secondary-light: #D7CCC8;
+  --secondary-dark: #4E342E;
+  --accent: #FBC02D; /* Harvest Gold */
+  --accent-light: #FFF9C4;
+  --bg-color: #FAFAF7; /* Warm Parchment */
+  --text-dark: #263238;
+  --text-muted: #546E7A;
   --white: #ffffff;
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
-  --shadow-lg: 0 8px 30px rgba(0,0,0,0.15);
-  --border-radius: 12px;
-  --transition: 0.3s ease;
+  --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
+  --border-radius: 16px;
+  --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {
@@ -68,23 +73,24 @@ ul {
 .btn-primary {
   background-color: var(--primary);
   color: var(--white);
-  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+  box-shadow: 0 4px 15px rgba(56, 142, 60, 0.2);
 }
 
 .btn-primary:hover {
-  background-color: var(--dark-green);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(27, 94, 32, 0.4);
+  background-color: var(--primary-dark);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(27, 94, 32, 0.3);
 }
 
 .btn-secondary {
   background-color: var(--white);
-  color: var(--primary);
-  border: 2px solid var(--primary);
+  color: var(--secondary-dark);
+  border: 2px solid var(--secondary);
 }
 
 .btn-secondary:hover {
-  background-color: var(--light-green);
+  background-color: var(--secondary-light);
+  border-color: var(--secondary-dark);
 }
 
 .btn-block {
@@ -112,7 +118,7 @@ ul {
 .logo {
   font-size: 1.5rem;
   font-weight: 800;
-  color: var(--dark-green);
+  color: var(--primary-dark);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -143,15 +149,25 @@ ul {
    Landing Page Sections
    ========================================================= */
 .hero-section {
-  background: linear-gradient(135deg, var(--light-green) 0%, #c8e6c9 100%);
-  padding: 100px 0;
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent-light) 100%);
+  padding: 120px 0;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: url('https://www.transparenttextures.com/patterns/leaf.png');
+  opacity: 0.1;
 }
 
 .hero-section h1 {
   font-size: 3.5rem;
   font-weight: 800;
-  color: var(--dark-green);
+  color: var(--primary-dark);
   margin-bottom: 20px;
   line-height: 1.2;
   animation: fadeInDown 0.8s ease-out forwards;
@@ -174,7 +190,7 @@ ul {
 .section-title {
   text-align: center;
   font-size: 2.5rem;
-  color: var(--dark-green);
+  color: var(--primary-dark);
   margin-bottom: 50px;
 }
 
@@ -195,7 +211,7 @@ ul {
 
 .split-content h2 {
   font-size: 2rem;
-  color: var(--dark-green);
+  color: var(--primary-dark);
   margin-bottom: 20px;
 }
 
@@ -255,8 +271,11 @@ ul {
 }
 
 .feature-icon {
-  font-size: 3rem;
-  color: var(--primary);
+  font-size: 3.5rem;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
   margin-bottom: 20px;
 }
 
@@ -284,22 +303,62 @@ ul {
 }
 
 .step-number {
-  background: var(--primary);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: var(--white);
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 700;
   margin: 0 auto 15px auto;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Benefits Section */
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.benefit-item {
+  display: flex;
+  gap: 20px;
+  background: var(--white);
+  padding: 30px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  border-left: 5px solid var(--accent);
+}
+
+.benefit-item:hover {
+  transform: translateX(10px);
+  box-shadow: var(--shadow-md);
+  border-left-color: var(--primary);
+}
+
+.benefit-icon {
+  font-size: 2.5rem;
+  color: var(--secondary);
+}
+
+.benefit-text h3 {
+  color: var(--primary-dark);
+  margin-bottom: 10px;
+}
+
+.benefit-text p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
 }
 
 /* Trusted Banner */
 .trusted-banner {
-  background: var(--dark-green);
+  background: var(--primary-dark);
   color: var(--white);
   text-align: center;
   padding: 60px 0;
@@ -375,7 +434,7 @@ ul {
 
 .auth-card h2 {
   text-align: center;
-  color: var(--dark-green);
+  color: var(--primary-dark);
   margin-bottom: 10px;
 }
 
@@ -547,7 +606,7 @@ ul {
 
 .card h3 {
   margin-bottom: 20px;
-  color: var(--dark-green);
+  color: var(--primary-dark);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -579,12 +638,12 @@ ul {
 
 .file-upload:hover {
   border-color: var(--primary);
-  background: var(--light-green);
+  background: var(--primary-light);
 }
 
 /* Result Cards */
 .result-card {
-  background: var(--light-green);
+  background: var(--primary-light);
   padding: 20px;
   border-radius: var(--border-radius);
   text-align: center;
