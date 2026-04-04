@@ -860,7 +860,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     block.innerHTML = html;
-    resultSection.appendChild(block);
+    
+    const container = document.getElementById('fert-plans-container');
+    if (container) {
+      container.appendChild(block);
+    } else {
+      resultSection.appendChild(block);
+    }
   }
 
   window.switchFertTab = function (activeIdx) {
