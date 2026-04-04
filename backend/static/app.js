@@ -11,25 +11,36 @@ document.addEventListener('DOMContentLoaded', () => {
   -------------------------------------------------------- */
   const loginForm = document.getElementById('login-form');
   if (loginForm) {
+    // Demo accounts for the video
+    const demoAccounts = [
+      { email: 'yash3official0000@gmail.com', password: 'yash1234', name: 'Master Farmer' },
+      { email: 'raoh97119@gmail.com', password: 'raoh1234', name: 'Trial User' },
+
+      { email: 'dax.j.parmar@gmail.com', password: 'daxj1234', name: 'Master Farmer' },
+      { email: 'user@test.com', password: 'password123', name: 'Trial User' }
+    ];
+
     loginForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const errorDiv = document.getElementById('login-error');
       errorDiv.style.display = 'none';
 
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
+      const emailInput = document.getElementById('email').value.trim();
+      const passwordInput = document.getElementById('password').value;
 
-      if (!email || !password) {
+      // Find if credentials match any demo account (Case-Insensitive for Email)
+      const account = demoAccounts.find(acc => 
+        acc.email.toLowerCase() === emailInput.toLowerCase() && 
+        acc.password === passwordInput
+      );
+
+      if (account) {
+        localStorage.setItem('sf_user', JSON.stringify({ email: account.email, name: account.name }));
+        window.location.href = '/dashboard';
+      } else {
+        errorDiv.classList.add('d-block'); // Ensure it's visible
         errorDiv.style.display = 'block';
-        return;
       }
-
-      // Derive a display name from the email prefix
-      const name = email.split('@')[0].replace(/[._-]/g, ' ')
-        .replace(/\b\w/g, c => c.toUpperCase());
-
-      localStorage.setItem('sf_user', JSON.stringify({ email, name }));
-      window.location.href = '/dashboard';
     });
   }
 
@@ -131,67 +142,150 @@ document.addEventListener('DOMContentLoaded', () => {
   -------------------------------------------------------- */
   let pieChartInstance = null;
   let barChartInstance = null;
+  let phChartInstance = null;
+  let microChartInstance = null;
+  let polarChartInstance = null;
 
-  function renderCharts(N, P, K) {
+  function renderCharts(data) {
+    const { N, P, K, ph, temperature, humidity, rainfall } = data;
+    const optional = {
+      Mg: data.Mg || 0,
+      Ca: data.Ca || 0,
+      S: data.S || 0,
+      Fe: data.Fe || 0,
+      Mn: data.Mn || 0,
+      Zn: data.Zn || 0,
+      Cu: data.Cu || 0
+    };
+
     const ctxPie = document.getElementById('pieChart');
     const ctxBar = document.getElementById('barChart');
-    if (!ctxPie || !ctxBar) return;
+    const ctxPh = document.getElementById('phBarChart');
+    const ctxMicro = document.getElementById('microChart');
+    const ctxPolar = document.getElementById('polarChart');
 
-    if (pieChartInstance) pieChartInstance.destroy();
-    if (barChartInstance) barChartInstance.destroy();
+    if (!ctxPie || !ctxBar || !ctxPh || !ctxMicro || !ctxPolar) return;
 
+    // Destroy existing instances
+    [pieChartInstance, barChartInstance, phChartInstance, microChartInstance, polarChartInstance].forEach(inst => inst && inst.destroy());
+
+    // 1. NPK Doughnut Chart
     pieChartInstance = new Chart(ctxPie, {
       type: 'doughnut',
       data: {
-        labels: ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)'],
+        labels: ['Nitrogen', 'Phosphorus', 'Potassium'],
         datasets: [{
           data: [N, P, K],
           backgroundColor: ['#4caf50', '#ff9800', '#f44336'],
-          hoverOffset: 10,
-          borderWidth: 2,
-          borderColor: '#ffffff'
+          hoverOffset: 12,
+          borderWidth: 2
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: {
-          legend: { position: 'bottom', labels: { font: { family: 'Inter' } } }
-        },
-        cutout: '70%'
+        plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'NPK Ratio Distribution' } },
+        cutout: '65%'
       }
     });
 
+    // 2. Nutrient Levels Bar Chart
     barChartInstance = new Chart(ctxBar, {
       type: 'bar',
       data: {
-        labels: ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)'],
+        labels: ['N', 'P', 'K'],
         datasets: [{
-          label: 'Level (kg/ha)',
+          label: 'Concentration (kg/ha)',
           data: [N, P, K],
-          backgroundColor: [
-            'rgba(76,175,80,0.85)',
-            'rgba(255,152,0,0.85)',
-            'rgba(244,67,54,0.85)'
-          ],
-          borderRadius: 8,
-          barPercentage: 0.6
+          backgroundColor: ['rgba(76, 175, 80, 0.7)', 'rgba(255, 152, 0, 0.7)', 'rgba(244, 67, 54, 0.7)'],
+          borderColor: ['#4caf50', '#ff9800', '#f44336'],
+          borderWidth: 1,
+          borderRadius: 6
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          y: { beginAtZero: true, grid: { borderDash: [5, 5] } },
-          x: { grid: { display: false } }
-        }
+        scales: { y: { beginAtZero: true, title: { display: true, text: 'Values' } } }
+      }
+    });
+
+    // 3. (Removed Radar Chart)
+
+    // 4. pH Balance Analysis
+    phChartInstance = new Chart(ctxPh, {
+      type: 'bar',
+      data: {
+        labels: ['Current pH'],
+        datasets: [{
+          label: 'pH Level (0-14)',
+          data: [ph],
+          backgroundColor: ph < 5.5 ? '#f44336' : (ph > 7.5 ? '#1e88e5' : '#4caf50'),
+          borderWidth: 1,
+          borderRadius: 20,
+          barThickness: 40
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { x: { min: 0, max: 14, ticks: { stepSize: 1 } } },
+        plugins: { subtitle: { display: true, text: ph < 5.5 ? 'Acidic' : (ph > 7.5 ? 'Alkaline' : 'Neutral') } }
+      }
+    });
+
+    // 5. Micronutrients Metrics
+    microChartInstance = new Chart(ctxMicro, {
+      type: 'bar',
+      data: {
+        labels: ['Mg', 'Ca', 'S', 'Fe', 'Mn', 'Zn', 'Cu'],
+        datasets: [{
+          label: 'Micronutrient PPM',
+          data: [optional.Mg, optional.Ca, optional.S, optional.Fe, optional.Mn, optional.Zn, optional.Cu],
+          backgroundColor: '#9c27b0',
+          borderRadius: 4
+        }]
+      },
+      options: {
+        indexAxis: 'x',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } }
+      }
+    });
+
+    // 6. Soil Fingerprint Polar Area Chart
+    polarChartInstance = new Chart(ctxPolar, {
+      type: 'polarArea',
+      data: {
+        labels: ['N', 'P', 'K', 'pH', 'Temp', 'Hum', 'Rain'],
+        datasets: [{
+          label: 'Full Profile',
+          data: [N, P, K, ph * 10, temperature, humidity, rainfall / 5],
+          backgroundColor: [
+            'rgba(76, 175, 80, 0.5)',
+            'rgba(255, 152, 0, 0.5)',
+            'rgba(244, 67, 54, 0.5)',
+            'rgba(33, 150, 243, 0.5)',
+            'rgba(156, 39, 176, 0.5)',
+            'rgba(0, 150, 136, 0.5)',
+            'rgba(63, 81, 181, 0.5)'
+          ]
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'right' } }
       }
     });
   }
 
-  // Render initial placeholder chart if on dashboard
-  if (document.getElementById('pieChart')) renderCharts(50, 40, 40);
+  // Initial Placeholder render
+  if (document.getElementById('pieChart')) {
+    renderCharts({ N: 50, P: 40, K: 40, ph: 6.5, temperature: 25, humidity: 60, rainfall: 100 });
+  }
 
   /* --------------------------------------------------------
      DASHBOARD: Display Results
@@ -252,9 +346,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const navResult = document.getElementById('nav-result');
     if (navResult) navResult.style.display = 'flex';
 
-    // -- Update charts with actual NPK values --
+    // -- Update charts with all soil values --
     if (payloadForDisplay && payloadForDisplay.N !== undefined) {
-      renderCharts(payloadForDisplay.N, payloadForDisplay.P, payloadForDisplay.K);
+      renderCharts(payloadForDisplay);
     }
 
     // -- Top-3 Crops Ranking with Progress Bars --

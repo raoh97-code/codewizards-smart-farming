@@ -592,6 +592,18 @@ ul {
   gap: 20px;
 }
 
+@media (max-width: 1200px) {
+  .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
 .card {
   background: var(--white);
   border-radius: var(--border-radius);

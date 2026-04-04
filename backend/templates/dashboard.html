@@ -372,19 +372,46 @@
            VIEW: CHARTS
            ============================================== -->
       <section id="view-charts" class="dashboard-view">
-        <div class="grid-2">
+        <div class="vertical-charts-container" style="display: flex; flex-direction: column; gap: 30px; max-width: 900px; margin: 0 auto;">
+          
+          <!-- Combined NPK Card -->
           <div class="card">
-            <h3><i class="fa-solid fa-chart-pie"></i> NPK Ratio</h3>
-            <div class="chart-container">
-              <canvas id="pieChart"></canvas>
+            <h3><i class="fa-solid fa-flask"></i> Primary Nutrients (NPK) Analysis</h3>
+            <div class="grid-2">
+              <div class="chart-container">
+                <canvas id="pieChart"></canvas>
+              </div>
+              <div class="chart-container">
+                <canvas id="barChart"></canvas>
+              </div>
+            </div>
+            <p class="text-muted small" style="margin-top: 15px; text-align: center;">Left: Proportional distribution | Right: Absolute concentration (kg/ha)</p>
+          </div>
+
+          <!-- pH Analysis Card -->
+          <div class="card">
+            <h3><i class="fa-solid fa-vial"></i> pH Balance</h3>
+            <div class="chart-container" style="height: 200px;">
+              <canvas id="phBarChart"></canvas>
             </div>
           </div>
+
+          <!-- Micronutrients Card -->
           <div class="card">
-            <h3><i class="fa-solid fa-chart-column"></i> Soil Nutrients Metrics</h3>
-            <div class="chart-container">
-              <canvas id="barChart"></canvas>
+            <h3><i class="fa-solid fa-microscope"></i> Micronutrients Metrics</h3>
+            <div class="chart-container" style="height: 300px;">
+              <canvas id="microChart"></canvas>
             </div>
           </div>
+
+          <!-- Soil Fingerprint Card -->
+          <div class="card">
+            <h3><i class="fa-solid fa-earth-americas"></i> Soil Fingerprint (All-in-One Profile)</h3>
+            <div class="chart-container" style="height: 400px;">
+              <canvas id="polarChart"></canvas>
+            </div>
+          </div>
+
         </div>
       </section>
 
