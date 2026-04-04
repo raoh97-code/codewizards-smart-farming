@@ -1,238 +1,519 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Farming Assistant</title>
+  <title>SmartFarm — Soil intelligence for every farm</title>
+  <meta name="description"
+    content="AI-powered soil analysis, crop ranking, and fertilizer plans. Built for Indian farmers and agritech teams.">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <!-- Font Awesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
 
-  <!-- Navbar -->
+<body class="landing-page">
+
   <nav class="navbar">
     <div class="container nav-container">
-      <div class="logo">
-        <i class="fa-solid fa-leaf"></i> SmartFarm
-      </div>
-      <ul class="nav-links">
-        <li><a href="#home">Home</a></li>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#how-it-works">How It Works</a></li>
-        <li><a href="#benefits">Benefits</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-      <div class="nav-buttons">
-        <a href="/login" class="btn btn-secondary">Login</a>
-        <a href="/signup" class="btn btn-primary">Sign Up</a>
+      <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true">
+      <a href="#home" class="logo" aria-label="SmartFarm home">
+        <i class="fa-solid fa-leaf" aria-hidden="true"></i> SmartFarm
+      </a>
+      <label for="nav-toggle" class="nav-burger" aria-label="Open menu"><i class="fa-solid fa-bars"></i></label>
+      <div class="nav-panel">
+        <ul class="nav-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#india-impact">India</a></li>
+          <li><a href="#problem">Problem</a></li>
+          <li><a href="#solution">Solution</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#why-us">Why us</a></li>
+          <li><a href="#how-it-works">How it works</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="nav-buttons">
+          <a href="/login" class="btn btn-secondary">Login</a>
+          <a href="/signup" class="btn btn-primary">Sign Up</a>
+        </div>
       </div>
     </div>
   </nav>
 
-  <!-- Hero Section -->
-  <section id="home" class="hero-section">
+  <!-- Hero: SaaS split + tagline -->
+  <section id="home" class="hero-saas">
+    <div class="container hero-saas-grid">
+      <div class="hero-saas-copy">
+        <p class="section-kicker">Soil intelligence platform · Team CodeWizards</p>
+        <h1>
+          <span class="hero-tagline">From lab report to land decision</span>
+          <span class="hero-headline">Turn soil data into <em>confident</em> crop &amp; fertilizer choices</span>
+        </h1>
+        <p class="hero-lead">SmartFarm reads your soil — manual entry or PDF — and returns ranked crops, stage-wise
+          fertilizer plans, and plain-language guidance in English, हिंदी, and ગુજરાતી.</p>
+        <div class="hero-buttons">
+          <a href="/signup" class="btn btn-primary btn-lg">Start free — analyze soil</a>
+          <a href="#how-it-works" class="btn btn-secondary btn-lg">See how it works</a>
+        </div>
+        <div class="hero-trust-row">
+          <span class="hero-trust-pill"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Demo-ready for
+            judges</span>
+          <span class="hero-trust-pill"><i class="fa-solid fa-language" aria-hidden="true"></i> Multilingual
+            summaries</span>
+          <span class="hero-trust-pill"><i class="fa-solid fa-chart-line" aria-hidden="true"></i> ML crop ranking</span>
+        </div>
+      </div>
+      <div class="hero-saas-visual" aria-hidden="true">
+        <div class="hero-mockup">
+          <div class="hero-mockup-bar"><span></span><span></span><span></span></div>
+          <div class="hero-mockup-body">
+            <div class="hero-mockup-sidebar"></div>
+            <div class="hero-mockup-main">
+              <div class="hero-mockup-chart"></div>
+              <div class="hero-mockup-rows">
+                <div class="hero-mockup-row"></div>
+                <div class="hero-mockup-row hero-mockup-row-accent"></div>
+                <div class="hero-mockup-row"></div>
+              </div>
+            </div>
+          </div>
+          <div class="hero-mockup-float">
+            <i class="fa-solid fa-wheat-awn" aria-hidden="true"></i>
+            <span>Top crop match</span>
+            <strong>87%</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trusted by / social proof strip -->
+  <section class="logo-strip-section" aria-label="Built for">
     <div class="container">
-      <h1>Turning Soil Data into <br> Smart Farming Decisions</h1>
-      <p>AI-powered soil analysis platform that recommends the best crops, fertilizers, and soil improvements to increase productivity and promote sustainable farming.</p>
-      <div class="hero-buttons" style="display:flex; justify-content:center; gap: 20px;">
-        <a href="/signup" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">Get Started</a>
-        <a href="#features" class="btn btn-secondary" style="padding: 1rem 2rem; font-size: 1.1rem;">Learn More</a>
+      <p class="logo-strip-label">Built for teams who ship real agritech</p>
+      <div class="logo-strip">
+        <div class="logo-strip-item"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> University labs</div>
+        <div class="logo-strip-item"><i class="fa-solid fa-tractor" aria-hidden="true"></i> Progressive farms</div>
+        <div class="logo-strip-item"><i class="fa-solid fa-building-wheat" aria-hidden="true"></i> FPOs &amp;
+          cooperatives</div>
+        <div class="logo-strip-item"><i class="fa-solid fa-flask-vial" aria-hidden="true"></i> Soil testing centres
+        </div>
+        <!-- <div class="logo-strip-item"><i class="fa-solid fa-code" aria-hidden="true"></i> Hackathon demos</div> -->
       </div>
     </div>
   </section>
 
-  <!-- Problem Section -->
-  <section class="section-padding bg-white">
-    <div class="container split-flex">
-      <div class="split-content">
-        <h2>Challenges in Soil Management</h2>
-        <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 1.1rem;">Soil health is one of the most overlooked factors limiting farm productivity.</p>
-        <ul>
-          <li><i class="fa-solid fa-arrow-right" style="color: var(--primary);"></i> Soil lab reports are technical and difficult to interpret without agronomic expertise.</li>
-          <li><i class="fa-solid fa-arrow-right" style="color: var(--primary);"></i> Identifying the right nutrient balance for a specific crop remains a persistent challenge.</li>
-          <li><i class="fa-solid fa-arrow-right" style="color: var(--primary);"></i> Poor crop selection results in significant yield loss and financial setbacks each season.</li>
-          <li><i class="fa-solid fa-arrow-right" style="color: var(--primary);"></i> Over-application of fertilizers degrades long-term soil quality and affects surrounding ecosystems.</li>
-        </ul>
+  <!-- India context / growth story -->
+  <section id="india-impact" class="section-padding section-india">
+    <div class="container">
+      <div class="section-head">
+        <p class="section-kicker">Why India needs this now</p>
+        <h2 class="section-title-inline">Agritech that respects scale, diversity, and the smallholder</h2>
+        <p class="section-lead">India’s farms span dozens of soil types and climates. Generic advice wastes input cost
+          and yield. We combine <strong>local soil context</strong> with <strong>ML ranking</strong> so recommendations
+          fit <em>your</em> field — not a textbook average.</p>
       </div>
-      <div class="split-img">
-        <img src="{{ url_for('static', filename='images/degraded_soil.png') }}" alt="Degraded Soil">
+      <div class="india-stats-grid">
+        <div class="india-stat-card">
+          <span class="india-stat-icon"><i class="fa-solid fa-seedling" aria-hidden="true"></i></span>
+          <strong>Productivity + resilience</strong>
+          <p>Aligning crop choice with soil health supports stable output under variable monsoon and input prices.</p>
+        </div>
+        <div class="india-stat-card">
+          <span class="india-stat-icon"><i class="fa-solid fa-droplet" aria-hidden="true"></i></span>
+          <strong>Input efficiency</strong>
+          <p>Right fertilizer, right stage — less waste, lower runoff, better long-term soil biology.</p>
+        </div>
+        <div class="india-stat-card">
+          <span class="india-stat-icon"><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i></span>
+          <strong>Digital reach</strong>
+          <p>Works in the browser: share reports with extension workers, family, or buyers in seconds.</p>
+        </div>
+      </div>
+      <div class="india-quote-block">
+        <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400&h=300&fit=crop"
+          alt="Farmer in a green field at sunrise" class="india-quote-img" width="400" height="300" loading="lazy">
+        <blockquote class="india-quote">
+          <p>“We don’t need more data on paper — we need <strong>one clear answer</strong>: what to grow, what to add,
+            and when. That’s the product we built.”</p>
+          <footer>— Narrative from field interviews · SmartFarm vision</footer>
+        </blockquote>
       </div>
     </div>
   </section>
 
-  <!-- Solution Section -->
-  <section class="section-padding" style="background-color: var(--light-green);">
-    <div class="container split-flex" style="flex-direction: row-reverse;">
-      <div class="split-content">
-        <h2>How SmartFarm Helps</h2>
-        <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 1.1rem;">A smarter way to understand your soil and make better farming decisions.</p>
-        <ul>
-          <li><i class="fa-solid fa-arrow-right" style="color: var(--primary);"></i> Upload your soil test report — PDF and image formats supported.</li>
-          <li><i class="fa-solid fa-arrow-right" style="color: var(--primary);"></i> Get a clear breakdown of soil nutrient levels, pH, and deficiencies.</li>
-          <li><i class="fa-solid fa-arrow-right" style="color: var(--primary);"></i> Receive crop and fertilizer recommendations tailored to your soil profile.</li>
-          <li><i class="fa-solid fa-arrow-right" style="color: var(--primary);"></i> Explore soil composition through clean, easy-to-read visual charts.</li>
-          <li><i class="fa-solid fa-arrow-right" style="color: var(--primary);"></i> Download a structured PDF report to reference anytime in the field.</li>
-        </ul>
+  <!-- Problem -->
+  <section id="problem" class="section-padding bg-white">
+    <div class="container">
+      <div class="section-head center">
+        <p class="section-kicker">The problem</p>
+        <h2 class="section-title-inline">What growers &amp; agronomists struggle with every season</h2>
       </div>
-      <div class="split-img">
-        <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=600&auto=format&fit=crop" alt="Smart Farming">
+      <div class="split-flex problem-split">
+        <div class="split-content">
+          <ul class="problem-list">
+            <li>
+              <span class="problem-num">01</span>
+              <div>
+                <h3>Reports nobody reads</h3>
+                <p class="text-muted">NPK and pH tables without interpretation leave farmers guessing.</p>
+              </div>
+            </li>
+            <li>
+              <span class="problem-num">02</span>
+              <div>
+                <h3>Wrong crop, wrong year</h3>
+                <p class="text-muted">Market hype beats soil fit — leading to avoidable yield and income shocks.</p>
+              </div>
+            </li>
+            <li>
+              <span class="problem-num">03</span>
+              <div>
+                <h3>Fertilizer guesswork</h3>
+                <p class="text-muted">Over/under application burns money and damages soil structure over time.</p>
+              </div>
+            </li>
+            <li>
+              <span class="problem-num">04</span>
+              <div>
+                <h3>No single workspace</h3>
+                <p class="text-muted">Lab PDFs, spreadsheets, and advice from three apps never meet in one place.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="split-img problem-visual">
+          <img src="{{ url_for('static', filename='images/degraded_soil.png') }}"
+            alt="Soil that needs better nutrient management" loading="lazy">
+          <p class="img-caption">Soil health is invisible until yield drops — we surface it early.</p>
+        </div>
       </div>
     </div>
   </section>
 
+  <!-- Solution + diagram -->
+  <section id="solution" class="section-padding section-solution">
+    <div class="container">
+      <div class="section-head center">
+        <p class="section-kicker">Our solution</p>
+        <h2 class="section-title-inline">One pipeline: soil in → intelligence out</h2>
+        <p class="section-lead narrow">Upload or type. SmartFarm normalizes nutrients, runs ML crop ranking, generates
+          fertilizer stages, and explains results in simple language — with optional translation.</p>
+      </div>
+      <div class="flow-diagram-wrap">
+        <svg class="flow-diagram" viewBox="0 0 920 200" xmlns="http://www.w3.org/2000/svg" aria-labelledby="flowTitle"
+          role="img">
+          <title id="flowTitle">SmartFarm data flow from input to action</title>
+          <defs>
+            <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#0c6b4d" />
+              <stop offset="100%" style="stop-color:#0d9488" />
+            </linearGradient>
+            <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#64748b" />
+            </marker>
+          </defs>
+          <rect x="20" y="40" width="160" height="120" rx="14" fill="#fff" stroke="#e2e8f0" stroke-width="2" />
+          <text x="100" y="88" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="600">Soil input</text>
+          <text x="100" y="110" text-anchor="middle" fill="#64748b" font-size="11">Manual · PDF · Image</text>
+          <line x1="180" y1="100" x2="248" y2="100" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)" />
+          <rect x="250" y="40" width="180" height="120" rx="14" fill="url(#g1)" opacity="0.95" />
+          <text x="340" y="88" text-anchor="middle" fill="#fff" font-size="14" font-weight="600">AI engine</text>
+          <text x="340" y="110" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="11">NPK · pH · micros ·
+            climate</text>
+          <line x1="430" y1="100" x2="498" y2="100" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)" />
+          <rect x="500" y="40" width="180" height="120" rx="14" fill="#fff" stroke="#e2e8f0" stroke-width="2" />
+          <text x="590" y="82" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="600">Outputs</text>
+          <text x="590" y="102" text-anchor="middle" fill="#64748b" font-size="11">Crops · Fertilizer · Charts</text>
+          <text x="590" y="122" text-anchor="middle" fill="#64748b" font-size="11">PDF · History</text>
+          <line x1="680" y1="100" x2="748" y2="100" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)" />
+          <rect x="750" y="40" width="150" height="120" rx="14" fill="#fef9e8" stroke="#c9a227" stroke-width="2" />
+          <text x="825" y="95" text-anchor="middle" fill="#78350f" font-size="14" font-weight="600">Action</text>
+          <text x="825" y="118" text-anchor="middle" fill="#92400e" font-size="11">Field-ready plan</text>
+        </svg>
+      </div>
+      <div class="solution-pillars">
+        <div class="pillar-card">
+          <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
+          <h3>Document intelligence</h3>
+          <p class="text-muted">Extract parameters from soil test PDFs and images where supported.</p>
+        </div>
+        <div class="pillar-card">
+          <i class="fa-solid fa-ranking-star" aria-hidden="true"></i>
+          <h3>Ranked recommendations</h3>
+          <p class="text-muted">Top crops with scores — not a single black-box label.</p>
+        </div>
+        <div class="pillar-card">
+          <i class="fa-solid fa-clipboard-list" aria-hidden="true"></i>
+          <h3>Stage-wise fertilizer</h3>
+          <p class="text-muted">Per-crop tabs with dose, timing, and micronutrient notes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <!-- Features Grid -->
+  <!-- Features -->
   <section id="features" class="section-padding bg-white">
     <div class="container">
-      <h2 class="section-title">Core Features</h2>
-      <div class="features-grid">
+      <div class="section-head center">
+        <p class="section-kicker">Product</p>
+        <h2 class="section-title-inline">Everything in one dashboard</h2>
+      </div>
+      <div class="features-grid features-grid-saas">
         <div class="feature-card">
-          <i class="fa-solid fa-microscope feature-icon"></i>
-          <h3>Soil Health Analysis</h3>
-          <p class="text-muted">In-depth breakdown of NPK values and soil acidity to determine overall land fertility.</p>
+          <i class="fa-solid fa-microscope feature-icon" aria-hidden="true"></i>
+          <h3>Soil health analysis</h3>
+          <p class="text-muted">NPK, pH, and micronutrients with clear deficiency signals.</p>
         </div>
         <div class="feature-card">
-          <i class="fa-solid fa-seedling feature-icon"></i>
-          <h3>Crop Recommendation</h3>
-          <p class="text-muted">Machine learning models predict the highest-yield crops suitable for your exact soil parameters.</p>
+          <i class="fa-solid fa-brain feature-icon" aria-hidden="true"></i>
+          <h3>ML crop ranking</h3>
+          <p class="text-muted">Top matches with confidence-style scores for comparison.</p>
         </div>
         <div class="feature-card">
-          <i class="fa-solid fa-flask feature-icon"></i>
-          <h3>Fertilizer Advisory</h3>
-          <p class="text-muted">Get precise fertilizer types and quantities to apply, preventing over-fertilization.</p>
+          <i class="fa-solid fa-flask feature-icon" aria-hidden="true"></i>
+          <h3>Fertilizer advisory</h3>
+          <p class="text-muted">Stage tables tuned to your soil profile and top crops.</p>
         </div>
         <div class="feature-card">
-          <i class="fa-solid fa-chart-pie feature-icon"></i>
-          <h3>Nutrient Visualization</h3>
-          <p class="text-muted">Interactive charts and graphs to help you visually understand your soil composition.</p>
+          <i class="fa-solid fa-chart-pie feature-icon" aria-hidden="true"></i>
+          <h3>Visual analytics</h3>
+          <p class="text-muted">NPK doughnut, pH bar, micronutrients, and soil fingerprint chart.</p>
         </div>
         <div class="feature-card">
-          <i class="fa-solid fa-file-pdf feature-icon"></i>
-          <h3>PDF Generation</h3>
-          <p class="text-muted">Instantly generate and download professional PDF reports of your soil analysis.</p>
+          <i class="fa-solid fa-language feature-icon" aria-hidden="true"></i>
+          <h3>Simple explanation + translate</h3>
+          <p class="text-muted">Plain-language summary in EN / HI / GU for stakeholders.</p>
         </div>
         <div class="feature-card">
-          <i class="fa-solid fa-clock-rotate-left feature-icon"></i>
-          <h3>History Tracking</h3>
-          <p class="text-muted">Keep a permanent digital log of all your historical soil tests and field improvements.</p>
+          <i class="fa-solid fa-clock-rotate-left feature-icon" aria-hidden="true"></i>
+          <h3>Session &amp; workflow</h3>
+          <p class="text-muted">Login flow, dashboard views, and analysis history in-product.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- How it Works -->
-  <section id="how-it-works" class="section-padding" style="background-color: var(--light-green);">
-    <div class="container">
-      <h2 class="section-title">How It Works</h2>
-      <div class="steps-container">
-        <div class="step-box">
-          <div class="step-number">1</div>
-          <h4>Input Data</h4>
-          <p class="text-muted" style="font-size: 0.9rem; margin-top: 10px;">Enter soil data manually or upload your soil test report PDF.</p>
-        </div>
-        <div class="step-box">
-          <div class="step-number">2</div>
-          <h4>AI Processing</h4>
-          <p class="text-muted" style="font-size: 0.9rem; margin-top: 10px;">Our machine learning algorithms process your soil parameters.</p>
-        </div>
-        <div class="step-box">
-          <div class="step-number">3</div>
-          <h4>Get Insights</h4>
-          <p class="text-muted" style="font-size: 0.9rem; margin-top: 10px;">Receive exact crop and fertilizer recommendations instantly.</p>
-        </div>
-        <div class="step-box">
-          <div class="step-number">4</div>
-          <h4>Download</h4>
-          <p class="text-muted" style="font-size: 0.9rem; margin-top: 10px;">Save the detailed analysis as a PDF and track history.</p>
-        </div>
+
+
+  <!-- Farmer story -->
+  <section class="section-padding section-farmer-story">
+    <div class="container farmer-story-grid">
+      <div class="farmer-story-media">
+        <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=640&h=480&fit=crop"
+          alt="Farmer examining crops in a lush field" width="640" height="480" loading="lazy">
+        <!-- <div class="farmer-story-badge"><i class="fa-solid fa-heart" aria-hidden="true"></i> Story-driven design</div> -->
+      </div>
+      <div class="farmer-story-copy">
+        <p class="section-kicker">Field narrative</p>
+        <h2>Built around the rhythm of a real season</h2>
+        <p class="lead-muted">Before sowing, a family debates cotton vs. pulses. The soil test says one thing; the
+          market says another. <strong>SmartFarm</strong> doesn’t replace experience — it <em>grounds</em> the debate in
+          numbers: nutrients, pH, ranked crops, and a fertilizer path you can follow week by week.</p>
+        <ul class="farmer-story-list">
+          <li><i class="fa-solid fa-check" aria-hidden="true"></i> Less argument, more alignment before costly inputs
+          </li>
+          <li><i class="fa-solid fa-check" aria-hidden="true"></i> Reports you can show to bankers, FPOs, or buyers</li>
+          <li><i class="fa-solid fa-check" aria-hidden="true"></i> Designed for repeat tests season after season</li>
+        </ul>
+        <a href="/signup" class="btn btn-primary">Try the full workflow</a>
       </div>
     </div>
   </section>
 
-  <!-- Benefits Section -->
-  <section id="benefits" class="section-padding" style="background-color: var(--bg-color);">
+  <!-- Why us -->
+  <section id="why-us" class="section-padding section-benefits">
     <div class="container">
-      <h2 class="section-title">Why Choose SmartFarm?</h2>
-      <div class="benefits-grid">
+      <div class="section-head center">
+        <p class="section-kicker">Why SmartFarm</p>
+        <h2 class="section-title-inline">Not another generic chatbot — a structured agronomy workspace</h2>
+      </div>
+      <div class="benefits-grid benefits-grid-tight">
         <div class="benefit-item">
-          <div class="benefit-icon"><i class="fa-solid fa-chart-line"></i></div>
+          <div class="benefit-icon"><i class="fa-solid fa-layer-group" aria-hidden="true"></i></div>
           <div class="benefit-text">
-            <h3>Increase Crop Yield</h3>
-            <p>Maximize your harvest potential with AI-driven insights that match the right seed to the right soil condition.</p>
+            <h3>End-to-end in one app</h3>
+            <p>Input → ML → fertilizer tables → charts → explanation. No context switching.</p>
           </div>
         </div>
         <div class="benefit-item">
-          <div class="benefit-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+          <div class="benefit-icon"><i class="fa-solid fa-eye" aria-hidden="true"></i></div>
           <div class="benefit-text">
-            <h3>Reduce Fertilizer Cost</h3>
-            <p>Save money by applying only what is necessary. Our system prevents costly over-fertilization through precise advisory.</p>
+            <h3>Transparent ranking</h3>
+            <p>See top 3 crops with scores — useful for judges and for farmer trust.</p>
           </div>
         </div>
         <div class="benefit-item">
-          <div class="benefit-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+          <div class="benefit-icon"><i class="fa-solid fa-leaf" aria-hidden="true"></i></div>
           <div class="benefit-text">
-            <h3>Improve Soil Health</h3>
-            <p>Maintain long-term fertility and prevent land degradation with sustainable nutrient management suggestions.</p>
+            <h3>Sustainability-minded</h3>
+            <p>Reduce over-fertilization; pair nutrients to crop stage instead of blanket doses.</p>
           </div>
         </div>
         <div class="benefit-item">
-          <div class="benefit-icon"><i class="fa-solid fa-earth-americas"></i></div>
+          <div class="benefit-icon"><i class="fa-solid fa-trophy" aria-hidden="true"></i></div>
           <div class="benefit-text">
             <h3>Eco-Friendly Farming</h3>
-            <p>Promote environmental sustainability by reducing runoff and optimizing resource usage for a greener planet.</p>
+            <p>Promote environmental sustainability by reducing chemical usage and promoting organic farming practices.
+            </p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Trusted Banner -->
-  <section class="trusted-banner">
+  <!-- How it works -->
+  <section id="how-it-works" class="section-padding section-alt">
     <div class="container">
-      <h2>Designed for Smart and Sustainable Agriculture</h2>
-      <p style="font-size: 1.2rem; opacity: 0.9;">Helping Farmers Make Data-Driven Decisions Across the Globe</p>
+      <div class="section-head center">
+        <p class="section-kicker">How it works</p>
+        <h2 class="section-title-inline">Four steps from soil sample to plan</h2>
+      </div>
+      <div class="steps-timeline">
+        <div class="step-tile">
+          <div class="step-tile-num">1</div>
+          <h4>Capture soil data</h4>
+          <p class="text-muted">Manual form with soil type, NPK, climate — or upload PDF / image.</p>
+        </div>
+        <div class="step-tile">
+          <div class="step-tile-num">2</div>
+          <h4>Process with ML</h4>
+          <p class="text-muted">Backend prediction ranks crops and builds fertilizer structures.</p>
+        </div>
+        <div class="step-tile">
+          <div class="step-tile-num">3</div>
+          <h4>Review insights</h4>
+          <p class="text-muted">Health summary, water hints, season notes, and top crop display.</p>
+        </div>
+        <div class="step-tile">
+          <div class="step-tile-num">4</div>
+          <h4>Act &amp; share</h4>
+          <p class="text-muted">Use charts in meetings; translate explanations for your team.</p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer id="contact" class="footer">
+  <!-- FAQ -->
+  <section id="faq" class="section-padding bg-white">
+    <div class="container container-narrow">
+      <div class="section-head center">
+        <p class="section-kicker">FAQ</p>
+        <h2 class="section-title-inline">Questions judges &amp; users ask</h2>
+      </div>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Is this only for large farms?</summary>
+          <p>No. The same workflow helps small plots and demo fields — what matters is having soil parameters (typed or
+            from a report).</p>
+        </details>
+        <details class="faq-item">
+          <summary>Do you replace agronomists?</summary>
+          <p>We augment expertise: faster interpretation, consistent structure, and visuals — especially when experts
+            are overloaded.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What about languages?</summary>
+          <p>The dashboard includes translation controls for key explanation and fertilizer context in English, Hindi,
+            and Gujarati.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Is my data safe?</summary>
+          <p>This build focuses on analysis flow and follow your org’s data policy
+            for production.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="section-padding section-contact">
+    <div class="container contact-grid">
+      <div class="contact-card">
+        <p class="section-kicker">Contact</p>
+        <h2>Talk to Team CodeWizards</h2>
+        <p class="lead-muted">Questions about the demo, model, or collaboration — we’re happy to walk judges through the
+          stack.</p>
+        <ul class="contact-list">
+          <!-- <li><i class="fa-solid fa-envelope" aria-hidden="true"></i> <a -->
+          <!-- href="mailto:hello@smartfarm.ai">hello@smartfarm.ai</a></li> -->
+          <!-- <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Craftathon · Gujarat University ecosystem</li> -->
+          <li><i class="fa-solid fa-users" aria-hidden="true"></i> Team CodeWizards — Smart Farming Assistant</li>
+        </ul>
+        <div class="contact-cta-row">
+          <a href="/signup" class="btn btn-primary">Create account</a>
+          <a href="/login" class="btn btn-secondary">Login</a>
+        </div>
+      </div>
+      <div class="contact-aside">
+        <div class="contact-map-card">
+          <div class="contact-map-placeholder" aria-hidden="true">
+            <i class="fa-solid fa-map-location-dot"></i>
+            <span>India · Agritech for every soil type</span>
+          </div>
+          <p class="text-muted small">Map illustrative — product is web-based and accessible anywhere you have a
+            browser.</p>
+        </div>
+        <div class="contact-social-card">
+          <span>Follow the project</span>
+          <div class="footer-social contact-social-icons">
+            <a href="#" aria-label="GitHub"><i class="fa-brands fa-github" aria-hidden="true"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin" aria-hidden="true"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fa-brands fa-twitter" aria-hidden="true"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="trusted-banner trusted-banner-saas">
+    <div class="container">
+      <h2>Ready to impress your soil — and the judges?</h2>
+      <p class="trusted-sub">Sign up, run an analysis, and show the full journey from upload to ranked crops in under
+        five minutes.</p>
+      <div class="trusted-cta">
+        <a href="/signup" class="btn btn-primary">Get started</a>
+        <a href="#contact" class="btn btn-secondary btn-on-dark">Contact team</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
     <div class="container">
       <div class="footer-grid">
         <div>
-          <h3 style="display:flex; align-items:center; gap: 10px;">
-            <i class="fa-solid fa-leaf" style="color:var(--primary);"></i> SmartFarm
+          <h3 class="footer-brand">
+            <i class="fa-solid fa-leaf" aria-hidden="true"></i> SmartFarm
           </h3>
-          <p style="color: #999; font-size: 0.95rem;">Empowering the future of agriculture through artificial intelligence and comprehensive data science.</p>
+          <p class="footer-desc">Soil intelligence for confident farming · 2026</p>
         </div>
         <div>
-          <h3>Quick Links</h3>
+          <h3>Explore</h3>
           <ul>
+            <li><a href="#india-impact">India focus</a></li>
             <li><a href="#features">Features</a></li>
-            <li><a href="#how-it-works">How It Works</a></li>
-            <li><a href="#benefits">Benefits</a></li>
+            <li><a href="#solution">Solution</a></li>
+            <li><a href="#testimonials">Reviews</a></li>
+            <li><a href="#faq">FAQ</a></li>
             <li><a href="/login">Login</a></li>
           </ul>
         </div>
         <div>
-          <h3>Contact & Team</h3>
-          <ul style="color: #999;">
+          <h3>Legal &amp; team</h3>
+          <ul class="footer-contact">
             <li>Team CodeWizards</li>
-            <li>Craftathon GU Hackathon Project</li>
-            <li>hello@smartfarm.ai</li>
-            <li style="margin-top: 10px; font-size: 1.5rem; display:flex; gap: 15px;">
-              <i class="fa-brands fa-github"></i>
-              <i class="fa-brands fa-twitter"></i>
-              <i class="fa-brands fa-linkedin"></i>
-            </li>
+            <!-- <li>Hackathon demonstration project</li> -->
+            <!-- <li><a href="mailto:hello@smartfarm.ai">hello@smartfarm.ai</a></li> -->
           </ul>
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2026 Smart Farming Assistant. All rights reserved.</p>
+        <p>&copy; 2026 Smart Farming Assistant. Built with care for farmers.</p>
       </div>
     </div>
   </footer>
 
 </body>
+
 </html>

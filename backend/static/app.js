@@ -87,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
      DASHBOARD: User Greeting  (#user-greeting)
   -------------------------------------------------------- */
   const userGreeting = document.getElementById('user-greeting');
+  const topbarAvatar = document.getElementById('topbar-avatar');
   if (userGreeting) {
     try {
       const user = JSON.parse(localStorage.getItem('sf_user') || '{}');
@@ -94,9 +95,25 @@ document.addEventListener('DOMContentLoaded', () => {
         // Show name if stored, else show email prefix
         const display = user.name || user.email.split('@')[0];
         userGreeting.textContent = `Hello, ${display}`;
+        if (topbarAvatar) {
+          topbarAvatar.textContent = display.trim().charAt(0).toUpperCase() || 'F';
+        }
       }
     } catch (_) { }
   }
+
+  function refreshDashboardStats() {
+    const runsEl = document.getElementById('dash-stat-runs');
+    const lastEl = document.getElementById('dash-stat-lastcrop');
+    if (runsEl) {
+      runsEl.textContent = localStorage.getItem('sf_analysis_count') || '0';
+    }
+    if (lastEl) {
+      lastEl.textContent = localStorage.getItem('sf_last_crop_label') || '—';
+    }
+  }
+
+  refreshDashboardStats();
 
   /* --------------------------------------------------------
      DASHBOARD: Logout  (#logout-btn)
@@ -132,6 +149,8 @@ document.addEventListener('DOMContentLoaded', () => {
   menuItems.forEach(item => {
     item.addEventListener('click', () => {
       switchView(item.getAttribute('data-target'));
+      const toggle = document.getElementById('dash-menu-toggle');
+      if (toggle) toggle.checked = false;
     });
   });
 
@@ -406,6 +425,23 @@ document.addEventListener('DOMContentLoaded', () => {
         explainCard.style.display = 'block';
       }
     }
+
+    // -- Dashboard: persist stats --
+    try {
+      const n = parseInt(localStorage.getItem('sf_analysis_count') || '0', 10) + 1;
+      localStorage.setItem('sf_analysis_count', String(n));
+      refreshDashboardStats();
+    } catch (_) { }
+
+    try {
+      if (data.crops && data.crops.length > 0) {
+        const raw = data.crops[0].crop;
+        const label = raw.charAt(0).toUpperCase() + raw.slice(1);
+        localStorage.setItem('sf_last_crop_label', label);
+        const lastEl = document.getElementById('dash-stat-lastcrop');
+        if (lastEl) lastEl.textContent = label;
+      }
+    } catch (_) { }
   }
 
   /* --------------------------------------------------------
