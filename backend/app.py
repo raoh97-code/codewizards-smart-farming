@@ -1,14 +1,40 @@
 from utils.pdf_parser import extract_text_from_pdf, extract_soil_data
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
+from dotenv import load_dotenv
 import pickle
 import numpy as np
+import os
+import bcrypt
+from datetime import datetime, timezone
+from pymongo import MongoClient
 
 from utils.fertilizer import get_fertilizer_plan
 from utils.soil import soil_health
 
 app = Flask(__name__)
 CORS(app)
+
+# ================================
+# MONGODB CONNECTION
+# ================================
+
+load_dotenv()
+MONGO_URI = os.environ.get("MONGO_URI") 
+DATABASE_NAME = os.environ.get("DATABASE_NAME")
+
+try:
+    mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+    db = mongo_client[DATABASE_NAME]
+    users_col = db["users"]
+    reports_col = db["reports"]
+    # Create indexes for faster lookups
+    users_col.create_index("email", unique=True)
+    reports_col.create_index([("email", 1), ("timestamp", -1)])
+    print("[MongoDB] Connected to", DATABASE_NAME)
+except Exception as e:
+    print(f"[MongoDB] Connection warning: {e}")
+    db = users_col = reports_col = None
 
 # Load model & scaler
 model = pickle.load(open("model/model.pkl", "rb"))
@@ -249,6 +275,102 @@ def predict():
         "soil": soil,
         "suggestions": "Use organic compost and maintain proper irrigation."
     })
+
+# ================================
+# AUTH ROUTES
+# ================================
+
+@app.route("/signup", methods=["POST"])
+def signup_api():
+    if users_col is None:
+        return jsonify({"error": "Database unavailable"}), 503
+
+    data = request.get_json()
+    email = (data.get("email") or "").strip().lower()
+    password = data.get("password") or ""
+    confirm = data.get("confirmPassword") or ""
+
+    if not email or not password:
+        return jsonify({"error": "Email and password are required"}), 400
+    if password != confirm:
+        return jsonify({"error": "Passwords do not match"}), 400
+    if len(password) < 6:
+        return jsonify({"error": "Password must be at least 6 characters"}), 400
+
+    if users_col.find_one({"email": email}):
+        return jsonify({"error": "An account with this email already exists"}), 409
+
+    hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+    users_col.insert_one({"email": email, "password": hashed})
+    return jsonify({"message": "Account created successfully"}), 201
+
+
+@app.route("/login", methods=["POST"])
+def login_api():
+    if users_col is None:
+        return jsonify({"error": "Database unavailable"}), 503
+
+    data = request.get_json()
+    email = (data.get("email") or "").strip().lower()
+    password = data.get("password") or ""
+
+    user = users_col.find_one({"email": email})
+    if not user:
+        return jsonify({"error": "Invalid email or password"}), 401
+
+    if not bcrypt.checkpw(password.encode("utf-8"), user["password"]):
+        return jsonify({"error": "Invalid email or password"}), 401
+
+    return jsonify({"message": "Login successful", "email": email}), 200
+
+
+# ================================
+# REPORT ROUTES
+# ================================
+
+@app.route("/save-report", methods=["POST"])
+def save_report():
+    if reports_col is None:
+        return jsonify({"error": "Database unavailable"}), 503
+
+    data = request.get_json()
+    email = (data.get("email") or "").strip().lower()
+    input_data = data.get("input")
+    output_data = data.get("output")
+
+    if not email or not input_data or not output_data:
+        return jsonify({"error": "email, input and output are required"}), 400
+
+    report = {
+        "email": email,
+        "input": input_data,
+        "output": output_data,
+        "timestamp": datetime.now(timezone.utc)
+    }
+    result = reports_col.insert_one(report)
+    return jsonify({"message": "Report saved", "id": str(result.inserted_id)}), 201
+
+
+@app.route("/history/<email>", methods=["GET"])
+def get_history(email):
+    if reports_col is None:
+        return jsonify({"error": "Database unavailable"}), 503
+
+    email = email.strip().lower()
+    cursor = reports_col.find(
+        {"email": email},
+        {"_id": 0}          # exclude Mongo ObjectId
+    ).sort("timestamp", -1)
+
+    reports = []
+    for doc in cursor:
+        # Convert datetime to ISO string for JSON serialisation
+        if isinstance(doc.get("timestamp"), datetime):
+            doc["timestamp"] = doc["timestamp"].isoformat()
+        reports.append(doc)
+
+    return jsonify(reports), 200
+
 
 if __name__ == "__main__":
     app.run(debug=True)

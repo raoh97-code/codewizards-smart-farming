@@ -38,6 +38,9 @@
       <div class="menu-item" data-target="view-charts">
         <i class="fa-solid fa-chart-pie"></i> Soil Charts
       </div>
+      <div class="menu-item" data-target="view-history" id="nav-history">
+        <i class="fa-solid fa-clock-rotate-left"></i> History
+      </div>
       <div style="margin-top: auto;"></div>
       <div class="menu-item" id="logout-btn" style="color: #c62828; margin-top: 50px;">
         <i class="fa-solid fa-right-from-bracket"></i> Logout
@@ -366,6 +369,27 @@
           </div>
         </div>
 
+      </section>
+
+      <!-- ==============================================
+           VIEW: HISTORY
+           ============================================== -->
+      <section id="view-history" class="dashboard-view">
+        <div class="card">
+          <h3><i class="fa-solid fa-clock-rotate-left"></i> Analysis History</h3>
+          <p class="text-muted" style="margin-bottom: 20px;">Click any report to view its full analysis results.</p>
+          <div id="history-list">
+            <div class="history-empty" id="history-empty" style="display:none;">
+              <i class="fa-solid fa-folder-open" style="font-size:2rem; color:#ccc;"></i>
+              <p style="margin-top:10px; color:#aaa;">No past analyses found. Run your first soil analysis!</p>
+            </div>
+            <div id="history-loading" style="display:none; text-align:center; padding:20px;">
+              <span class="spinner-border spinner-border-sm" style="color:var(--primary);"></span>
+              <span style="margin-left:8px; color:var(--text-muted);">Loading history&hellip;</span>
+            </div>
+            <div id="history-items"></div>
+          </div>
+        </div>
       </section>
 
       <!-- ==============================================

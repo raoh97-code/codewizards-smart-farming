@@ -11,16 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   -------------------------------------------------------- */
   const loginForm = document.getElementById('login-form');
   if (loginForm) {
-    // Demo accounts for the video
-    const demoAccounts = [
-      { email: 'yash3official0000@gmail.com', password: 'yash1234', name: 'Master Farmer' },
-      { email: 'raoh97119@gmail.com', password: 'raoh1234', name: 'Trial User' },
-
-      { email: 'dax.j.parmar@gmail.com', password: 'daxj1234', name: 'Master Farmer' },
-      { email: 'user@test.com', password: 'password123', name: 'Trial User' }
-    ];
-
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const errorDiv = document.getElementById('login-error');
       errorDiv.style.display = 'none';
@@ -28,17 +19,24 @@ document.addEventListener('DOMContentLoaded', () => {
       const emailInput = document.getElementById('email').value.trim();
       const passwordInput = document.getElementById('password').value;
 
-      // Find if credentials match any demo account (Case-Insensitive for Email)
-      const account = demoAccounts.find(acc => 
-        acc.email.toLowerCase() === emailInput.toLowerCase() && 
-        acc.password === passwordInput
-      );
+      try {
+        const res = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: emailInput, password: passwordInput })
+        });
+        const result = await res.json();
 
-      if (account) {
-        localStorage.setItem('sf_user', JSON.stringify({ email: account.email, name: account.name }));
-        window.location.href = '/dashboard';
-      } else {
-        errorDiv.classList.add('d-block'); // Ensure it's visible
+        if (res.ok) {
+          localStorage.setItem('sf_user', JSON.stringify({ email: result.email }));
+          window.location.href = '/dashboard';
+        } else {
+          errorDiv.querySelector ? (errorDiv.textContent = result.error || 'Invalid credentials.') : null;
+          errorDiv.textContent = result.error || 'Invalid email or password.';
+          errorDiv.style.display = 'block';
+        }
+      } catch (err) {
+        errorDiv.textContent = 'Could not connect to server. Please try again.';
         errorDiv.style.display = 'block';
       }
     });
@@ -49,23 +47,39 @@ document.addEventListener('DOMContentLoaded', () => {
   -------------------------------------------------------- */
   const signupForm = document.getElementById('signup-form');
   if (signupForm) {
-    signupForm.addEventListener('submit', (e) => {
+    signupForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const errorDiv = document.getElementById('signup-error');
       errorDiv.style.display = 'none';
 
-      const name = document.getElementById('name').value.trim();
       const email = document.getElementById('email').value.trim();
       const p1 = document.getElementById('password').value;
       const p2 = document.getElementById('confirm-password').value;
 
       if (p1 !== p2) {
+        errorDiv.textContent = 'Passwords do not match.';
         errorDiv.style.display = 'block';
         return;
       }
 
-      localStorage.setItem('sf_user', JSON.stringify({ email, name }));
-      window.location.href = '/login';
+      try {
+        const res = await fetch('/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password: p1, confirmPassword: p2 })
+        });
+        const result = await res.json();
+
+        if (res.ok) {
+          window.location.href = '/login';
+        } else {
+          errorDiv.textContent = result.error || 'Sign up failed. Please try again.';
+          errorDiv.style.display = 'block';
+        }
+      } catch (err) {
+        errorDiv.textContent = 'Could not connect to server. Please try again.';
+        errorDiv.style.display = 'block';
+      }
     });
   }
 
@@ -76,8 +90,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (userGreeting) {
     try {
       const user = JSON.parse(localStorage.getItem('sf_user') || '{}');
-      if (user && user.name) {
-        userGreeting.textContent = `Hello, ${user.name}`;
+      if (user && user.email) {
+        // Show name if stored, else show email prefix
+        const display = user.name || user.email.split('@')[0];
+        userGreeting.textContent = `Hello, ${display}`;
       }
     } catch (_) { }
   }
@@ -1040,6 +1056,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const data = await response.json();
         displayResults(data, payload);
+        saveReport(data, payload);
 
         setTimeout(() => {
           hideLoading();
@@ -1117,6 +1134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await response.json();
         // No NPK values to chart from upload (API doesn't echo them back)
         displayResults(data, data.input || null);
+        saveReport(data, data.input || null);
 
         setTimeout(() => {
           hideLoading();
@@ -1133,5 +1151,128 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Removed defunct downloadPdfBtn logic
+
+  /* --------------------------------------------------------
+     SAVE REPORT  — called after every successful analysis
+     Silently posts to /save-report; failure is non-blocking
+  -------------------------------------------------------- */
+  async function saveReport(apiResult, inputPayload) {
+    try {
+      const user = JSON.parse(localStorage.getItem('sf_user') || '{}');
+      const email = user.email;
+      if (!email) return; // Not logged in — skip silently
+
+      const output = {
+        crops: apiResult.crops || [],
+        soil: apiResult.soil || '',
+        fertilizer_plans: apiResult.fertilizer_plans || {},
+        suggestions: apiResult.suggestions || ''
+      };
+
+      await fetch('/save-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, input: inputPayload || {}, output })
+      });
+    } catch (err) {
+      console.warn('[saveReport] Failed silently:', err);
+    }
+  }
+
+  /* --------------------------------------------------------
+     HISTORY — loadHistory() + openReport()
+  -------------------------------------------------------- */
+  async function loadHistory() {
+    const user = JSON.parse(localStorage.getItem('sf_user') || '{}');
+    const email = user.email;
+
+    const historyItems = document.getElementById('history-items');
+    const historyEmpty = document.getElementById('history-empty');
+    const historyLoading = document.getElementById('history-loading');
+
+    if (!historyItems) return;
+
+    historyItems.innerHTML = '';
+    historyLoading.style.display = 'block';
+    historyEmpty.style.display = 'none';
+
+    if (!email) {
+      historyLoading.style.display = 'none';
+      historyEmpty.style.display = 'block';
+      return;
+    }
+
+    try {
+      const res = await fetch(`/history/${encodeURIComponent(email)}`);
+      const reports = await res.json();
+
+      historyLoading.style.display = 'none';
+
+      if (!Array.isArray(reports) || reports.length === 0) {
+        historyEmpty.style.display = 'block';
+        return;
+      }
+
+      reports.forEach((report) => {
+        const topCrop = report.output?.crops?.[0];
+        const cropName = topCrop ? topCrop.crop.charAt(0).toUpperCase() + topCrop.crop.slice(1) : 'Unknown';
+        const score = topCrop ? parseFloat(topCrop.score).toFixed(1) : '--';
+        const ts = report.timestamp ? new Date(report.timestamp) : null;
+        const dateStr = ts ? ts.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+        const timeStr = ts ? ts.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : '';
+
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.innerHTML = `
+          <div class="history-item-main">
+            <span class="history-item-icon">🌱</span>
+            <div class="history-item-info">
+              <strong class="history-item-crop">${cropName}</strong>
+              <span class="history-item-score">${score}% match</span>
+            </div>
+          </div>
+          <div class="history-item-meta">
+            <span class="history-item-date"><i class="fa-regular fa-calendar"></i> ${dateStr}</span>
+            <span class="history-item-time"><i class="fa-regular fa-clock"></i> ${timeStr}</span>
+          </div>
+          <div class="history-item-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+        `;
+        item.addEventListener('click', () => openReport(report));
+        historyItems.appendChild(item);
+      });
+
+    } catch (err) {
+      historyLoading.style.display = 'none';
+      historyItems.innerHTML = '<p style="color:#e53935; padding:10px;"><i class="fa-solid fa-triangle-exclamation"></i> Failed to load history. Please try again.</p>';
+    }
+  }
+
+  function openReport(report) {
+    // Build a synthetic API result from the saved report
+    const synth = {
+      crops: report.output?.crops || [],
+      soil: report.output?.soil || '',
+      fertilizer_plans: report.output?.fertilizer_plans || {},
+      suggestions: report.output?.suggestions || ''
+    };
+    const inputPayload = report.input || {};
+
+    displayResults(synth, inputPayload);
+
+    // Unlock and show the Analysis Result nav tab
+    const navResult = document.getElementById('nav-result');
+    if (navResult) navResult.style.display = 'flex';
+
+    // Navigate to result view
+    switchView('view-result');
+  }
+
+  // Load history whenever the History sidebar item is clicked
+  const navHistory = document.getElementById('nav-history');
+  if (navHistory) {
+    navHistory.addEventListener('click', () => {
+      loadHistory();
+    });
+  }
 
 });
