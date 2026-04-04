@@ -181,27 +181,31 @@ def upload():
         """
 
     file = request.files["file"]
-    soil_type = request.form.get("soil_type")
-
-    optional_nutrients = {
-        "Mg": request.form.get("Mg"),
-        "Ca": request.form.get("Ca"),
-        "S": request.form.get("S"),
-        "Fe": request.form.get("Fe"),
-        "Mn": request.form.get("Mn"),
-        "Zn": request.form.get("Zn"),
-        "Cu": request.form.get("Cu")
-    }
 
     # Extract text
     text = extract_text_from_pdf(file)
 
     # Extract soil values
     data = extract_soil_data(text)
+    soil_type = data.get("soil_type")
 
-    if None in data.values():
-        # return "Error: Some values missing in PDF"
-        return jsonify({"error": "Missing values in PDF"}), 400
+    required_fields = ["soil_type", "N", "P", "K", "temperature", "humidity", "ph", "rainfall"]
+    missing_required = [key for key in required_fields if data.get(key) is None]
+    
+    if missing_required:
+        return jsonify({
+            "error": f"Missing required values in PDF: {', '.join(missing_required)}"
+        }), 400
+
+    optional_nutrients = {
+        "Mg": data.get("Mg"),
+        "Ca": data.get("Ca"),
+        "S": data.get("S"),
+        "Fe": data.get("Fe"),
+        "Mn": data.get("Mn"),
+        "Zn": data.get("Zn"),
+        "Cu": data.get("Cu")
+    }
 
     # Prepare input
     features = [[

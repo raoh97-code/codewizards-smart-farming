@@ -57,7 +57,7 @@ def extract_soil_data(text):
 
     patterns = {
         "N": r"(Nitrogen|N)\s*[:=\-]?\s*(\d+)",
-        "P": r"(Phosphorus|P)\s*[:=\-]?\s*(\d+)",
+        "P": r"(Phosphorous|P)\s*[:=\-]?\s*(\d+)",
         "K": r"(Potassium|K)\s*[:=\-]?\s*(\d+)",
         "ph": r"(pH)\s*[:=\-]?\s*(\d+\.?\d*)",
         "temperature": r"(Temperature|T)\s*[:=\-]?\s*(\d+)",
