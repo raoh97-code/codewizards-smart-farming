@@ -6,3 +6,4 @@ PyPDF2
 pdfkit
 pymongo
 bcrypt
+gunicorn
