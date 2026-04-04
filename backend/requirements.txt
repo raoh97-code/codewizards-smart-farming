@@ -3,5 +3,6 @@ flask-cors
 numpy
 scikit-learn
 PyPDF2
+pdfkit
 pymongo
 bcrypt

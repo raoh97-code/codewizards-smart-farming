@@ -127,6 +127,123 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* --------------------------------------------------------
+    DASHBOARD: Download PDF  (#downloadPdfBtn)
+  -------------------------------------------------------- */
+  const downloadPdfBtns = document.querySelectorAll('.downloadPdfBtn');
+
+  downloadPdfBtns.forEach(btn => {
+    btn.addEventListener('click', async () => {
+
+      if (!currentInputData || !currentCrops) {
+        alert('Please run an analysis first before downloading the report.');
+        return;
+      }
+
+      try {
+        // -- Show spinner on button --
+        btn.disabled = true;
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Generating PDF…';
+
+        showLoading();
+
+        // -- Force Charts to be visible briefly to capture full size --
+        const chartsSection = document.getElementById('view-charts');
+        const wasHidden = !chartsSection.classList.contains('active');
+        let oldStyle = chartsSection.getAttribute('style') || '';
+        
+        if (wasHidden) {
+          chartsSection.style.display = 'block';
+          chartsSection.style.position = 'absolute';
+          chartsSection.style.width = '1000px';
+          chartsSection.style.top = '-9999px';
+          chartsSection.style.left = '-9999px';
+          
+          try {
+             const instances = [typeof pieChartInstance !== 'undefined' ? pieChartInstance : null, 
+                                typeof barChartInstance !== 'undefined' ? barChartInstance : null, 
+                                typeof phChartInstance !== 'undefined' ? phChartInstance : null, 
+                                typeof microChartInstance !== 'undefined' ? microChartInstance : null, 
+                                typeof polarChartInstance !== 'undefined' ? polarChartInstance : null];
+             instances.forEach(inst => {
+               if (inst) {
+                 inst.options.animation = false;
+                 inst.resize();
+                 inst.update();
+               }
+             });
+          } catch(e) {}
+          
+          // Allow a brief frame for the synchronous draw
+          await new Promise(r => setTimeout(r, 150));
+        }
+
+        // -- Capture all chart canvases as base64 PNG data URLs --
+        const chartIds = ['pieChart', 'barChart', 'phBarChart', 'microChart', 'polarChart'];
+        const charts = chartIds.map(id => {
+          const canvas = document.getElementById(id);
+          return canvas ? canvas.toDataURL('image/png') : null;
+        }).filter(Boolean);
+
+        // -- Restore original style --
+        if (wasHidden) {
+          chartsSection.setAttribute('style', oldStyle);
+        }
+
+        // -- Build a plain-text soil summary from cached input data --
+        const inp = currentInputData;
+        const soil_summary = inp
+          ? `N: ${inp.N} | P: ${inp.P} | K: ${inp.K} | pH: ${inp.ph ?? inp.pH} | ` +
+            `Temp: ${inp.temperature}°C | Humidity: ${inp.humidity}% | Rainfall: ${inp.rainfall}mm`
+          : 'Soil data not available';
+
+        // -- Build crops list (names + scores) --
+        const cropsPayload = (currentCrops || []).slice(0, 3).map(c => ({
+          crop: c.crop.charAt(0).toUpperCase() + c.crop.slice(1),
+          score: c.score
+        }));
+
+        const response = await fetch('/generate-pdf', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            charts: charts,
+            crops: cropsPayload,
+            soil: document.getElementById('res-health')?.textContent || '',
+            fertilizer_plans: currentFertilizer || {},
+            soil_summary
+          })
+        });
+
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          throw new Error(err.error || `Server error (${response.status})`);
+        }
+
+        const blob = await response.blob();
+
+        // -- Trigger browser download --
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Soil_Analysis_Report.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+      } catch (err) {
+        console.error('PDF generation error:', err);
+        alert('Failed to generate PDF: ' + err.message);
+      } finally {
+        hideLoading();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-file-pdf me-2"></i> Download Report';
+      }
+    });
+  });
+
+  /* --------------------------------------------------------
      DASHBOARD: Sidebar Navigation
   -------------------------------------------------------- */
   const menuItems = document.querySelectorAll('.menu-item[data-target]');
@@ -144,6 +261,9 @@ document.addEventListener('DOMContentLoaded', () => {
     views.forEach(view => {
       view.classList.toggle('active', view.id === targetId);
     });
+
+    const scrollContainer = document.querySelector('.dashboard-scroll');
+    if (scrollContainer) scrollContainer.scrollTop = 0;
   };
 
   menuItems.forEach(item => {

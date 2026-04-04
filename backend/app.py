@@ -1,10 +1,12 @@
 from utils.pdf_parser import extract_text_from_pdf, extract_soil_data
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Response
 from flask_cors import CORS
 from dotenv import load_dotenv
 import pickle
 import numpy as np
 import os
+import base64
+import pdfkit
 import bcrypt
 from datetime import datetime, timezone
 from pymongo import MongoClient
@@ -371,6 +373,81 @@ def get_history(email):
 
     return jsonify(reports), 200
 
+config = pdfkit.configuration(
+    wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+)
+
+options = {
+    "enable-local-file-access": None,
+    "quiet": "",
+    "page-size": "A4",
+    "encoding": "UTF-8",
+    "margin-top": "10mm",
+    "margin-bottom": "10mm",
+    "margin-left": "10mm",
+    "margin-right": "10mm",
+}
+
+def encode_chart(filename):
+    base_path = os.path.dirname(__file__)  # backend folder
+    full_path = os.path.join(base_path,"static", "charts", filename)
+
+    if not os.path.exists(full_path):
+        raise FileNotFoundError(f"Chart not found: {full_path}")
+
+    with open(full_path, "rb") as img:
+        return "data:image/png;base64," + base64.b64encode(img.read()).decode()
+    
+@app.route("/generate-pdf", methods=["POST"])
+def generate_pdf():
+
+    data = request.json
+
+    crops = data.get("crops", [])
+    fertilizer_plans = data.get("fertilizer_plans", {})
+    soil = data.get("soil", "Unknown")
+    charts = data.get("charts", [])
+    soil_summary = data.get("soil_summary", "")
+
+    try:
+        with open("utils/image.png", "rb") as image_file:
+            logo_b64 = base64.b64encode(image_file.read()).decode()
+            logo_data = f"data:image/png;base64,{logo_b64}"
+    except FileNotFoundError:
+        logo_data = ""
+
+    rendered = render_template(
+        "report.html",
+        crops=crops,
+        fertilizer_plans=fertilizer_plans,
+        soil=soil,
+        charts=charts,
+        soil_summary=soil_summary,
+        logo=logo_data
+    )
+
+    pdf_options = {
+        'enable-local-file-access': None,
+        'javascript-delay': 1000,
+        'no-stop-slow-scripts': None,
+        'load-error-handling': 'ignore',
+        'encoding': "UTF-8",
+        'page-size': 'A4',
+        'margin-top': '15mm',
+        'margin-bottom': '15mm',
+        'margin-left': '15mm',
+        'margin-right': '15mm'
+    }
+
+    pdf = pdfkit.from_string(rendered, False, configuration=config, options=pdf_options)
+
+    return Response(
+        pdf,
+        mimetype="application/pdf",
+        headers={
+            "Content-Disposition": "attachment; filename=soil_report.pdf"
+        }
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)
