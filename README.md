@@ -31,7 +31,7 @@ CodeWizards Smart Farming is an intelligent web application designed to help far
 
 **Architecture**
 ![Architecture](./images/Architecture_smart_farming.png)
-![Flow](./images/flowchart_smart_farming.png)
+<!-- ![Flow](./images/Flowchart_smart_farming.png) -->
 
 ## 💻 Tech Stack
 
