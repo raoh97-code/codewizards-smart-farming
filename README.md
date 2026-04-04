@@ -14,13 +14,24 @@ CodeWizards Smart Farming is an intelligent web application designed to help far
 - **🔐 User Authentication & History**: Secure login/signup system with a complete history of past soil tests and recommendations.
 
 ---
+**Landing  page**
 ![Landing_Page](./images/landing_page.png)
+
+**Manual input**
 ![Input](./images/input.png)
+
+**Result**
 ![Result](./images/result.png)
+
+**Chart**
 ![Chart](./images/chart.png)
+
+**History**
 ![History](./images/history.png)
+
+**Architecture**
 ![Architecture](./images/Architecture_smart_farming.png)
-![Flow](./images/flowchart.png)
+![Flow](./images/flowchart_smart_farming.png)
 
 ## 💻 Tech Stack
 
