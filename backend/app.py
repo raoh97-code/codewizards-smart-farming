@@ -4,7 +4,7 @@ from flask_cors import CORS
 import pickle
 import numpy as np
 
-from utils.fertilizer import fertilizer_advice
+from utils.fertilizer import get_fertilizer_plan
 from utils.soil import soil_health
 
 app = Flask(__name__)
@@ -33,13 +33,28 @@ SOIL_PREFERENCES = {
 }
 
 MICRONUTRIENT_REQS = {
-    "rice": {"Ca": (10,25),"Mg": (5,15),"S": (10,20),"Fe": (5,15),"Mn": (2,10),"Zn": (0.5,3),"Cu": (0.2,1)},
-    "maize": {"Ca": (15,30),"Mg": (10,25),"S": (10,20),"Fe": (4,12),"Mn": (3,10),"Zn": (1,5),"Cu": (0.2,1)},
-    "cotton": {"Ca": (20,40),"Mg": (15,30),"S": (15,25),"Fe": (5,12),"Mn": (4,10),"Zn": (1,5),"Cu": (0.5,2)},
-    "chickpea": {"Ca": (20,35),"Mg": (10,25),"S": (10,20),"Fe": (5,10),"Mn": (2,8),"Zn": (1,4),"Cu": (0.3,1)},
-    "banana": {"Ca": (30,60),"Mg": (20,40),"S": (20,30),"Fe": (6,15),"Mn": (5,15),"Zn": (2,6),"Cu": (0.5,2)},
-    "apple": {"Ca": (30,60),"Mg": (20,40),"S": (15,25),"Fe": (6,15),"Mn": (5,15),"Zn": (2,6),"Cu": (0.5,2)},
-    "grapes": {"Ca": (25,50),"Mg": (15,35),"S": (15,25),"Fe": (5,12),"Mn": (4,12),"Zn": (1,5),"Cu": (0.5,2)}
+    "rice":       {"Ca": (10, 25), "Mg": (5, 15), "S": (10, 20), "Fe": (5, 15), "Mn": (2, 10), "Zn": (0.5, 3), "Cu": (0.2, 1)},
+    "maize":      {"Ca": (15, 30), "Mg": (10, 25), "S": (10, 20), "Fe": (4, 12), "Mn": (3, 10), "Zn": (1, 5), "Cu": (0.2, 1)},
+    "jute":       {"Ca": (20, 40), "Mg": (10, 20), "S": (15, 25), "Fe": (5, 10), "Mn": (3, 8), "Zn": (1, 3), "Cu": (0.3, 1)},
+    "cotton":     {"Ca": (20, 40), "Mg": (15, 30), "S": (15, 25), "Fe": (5, 12), "Mn": (4, 10), "Zn": (1, 5), "Cu": (0.5, 2)},
+    "lentil":     {"Ca": (15, 30), "Mg": (10, 20), "S": (10, 20), "Fe": (5, 10), "Mn": (2, 8), "Zn": (1, 3), "Cu": (0.2, 1)},
+    "blackgram":  {"Ca": (15, 30), "Mg": (10, 20), "S": (10, 20), "Fe": (4, 10), "Mn": (2, 8), "Zn": (1, 3), "Cu": (0.2, 1)},
+    "pigeonpeas": {"Ca": (20, 35), "Mg": (10, 25), "S": (12, 22), "Fe": (5, 12), "Mn": (3, 10), "Zn": (1, 4), "Cu": (0.3, 1.5)},
+    "chickpea":   {"Ca": (20, 35), "Mg": (10, 25), "S": (10, 20), "Fe": (5, 10), "Mn": (2, 8), "Zn": (1, 4), "Cu": (0.3, 1)},
+    "mungbean":   {"Ca": (15, 30), "Mg": (10, 20), "S": (10, 20), "Fe": (4, 10), "Mn": (2, 8), "Zn": (1, 3), "Cu": (0.2, 1)},
+    "groundnut":  {"Ca": (25, 50), "Mg": (15, 30), "S": (15, 30), "Fe": (5, 12), "Mn": (3, 10), "Zn": (1, 4), "Cu": (0.5, 2)},
+    "banana":     {"Ca": (30, 60), "Mg": (20, 40), "S": (20, 30), "Fe": (6, 15), "Mn": (5, 15), "Zn": (2, 6), "Cu": (0.5, 2)},
+    "papaya":     {"Ca": (25, 50), "Mg": (15, 35), "S": (15, 25), "Fe": (5, 12), "Mn": (3, 10), "Zn": (1, 5), "Cu": (0.3, 1.5)},
+    "coconut":    {"Ca": (30, 60), "Mg": (20, 40), "S": (20, 30), "Fe": (6, 15), "Mn": (5, 15), "Zn": (2, 6), "Cu": (0.5, 2)},
+    "coffee":     {"Ca": (25, 50), "Mg": (15, 35), "S": (15, 25), "Fe": (5, 15), "Mn": (4, 12), "Zn": (1, 5), "Cu": (0.5, 2)},
+    "mothbeans":  {"Ca": (10, 25), "Mg": (8, 20),  "S": (8, 15),  "Fe": (4, 8),  "Mn": (2, 6),  "Zn": (0.5, 2), "Cu": (0.2, 0.8)},
+    "apple":      {"Ca": (30, 60), "Mg": (20, 40), "S": (15, 25), "Fe": (6, 15), "Mn": (5, 15), "Zn": (2, 6), "Cu": (0.5, 2)},
+    "orange":     {"Ca": (30, 60), "Mg": (20, 40), "S": (15, 25), "Fe": (6, 15), "Mn": (5, 15), "Zn": (2, 6), "Cu": (0.5, 2)},
+    "grapes":     {"Ca": (25, 50), "Mg": (15, 35), "S": (15, 25), "Fe": (5, 12), "Mn": (4, 12), "Zn": (1, 5), "Cu": (0.5, 2)},
+    "watermelon": {"Ca": (20, 40), "Mg": (15, 30), "S": (12, 20), "Fe": (5, 10), "Mn": (3, 10), "Zn": (1, 4), "Cu": (0.3, 1.5)},
+    "muskmelon":  {"Ca": (20, 40), "Mg": (15, 30), "S": (12, 20), "Fe": (5, 10), "Mn": (3, 10), "Zn": (1, 4), "Cu": (0.3, 1.5)},
+    "pomegranate":{"Ca": (25, 50), "Mg": (15, 35), "S": (15, 25), "Fe": (5, 12), "Mn": (4, 12), "Zn": (1, 5), "Cu": (0.5, 2)},
+    "coffee":     {"Ca": (25, 50), "Mg": (15, 35), "S": (15, 25), "Fe": (5, 15), "Mn": (4, 12), "Zn": (1, 5), "Cu": (0.5, 2)}
 }
 
 # ================================
@@ -179,7 +194,14 @@ def upload():
 
         # "crop" : crop,
 
-        "fertilizer": fertilizer_advice(data["N"], data["P"], data["K"]),
+        "fertilizer_plans": {
+            entry["crop"]: get_fertilizer_plan(
+                entry["crop"],
+                {"N": data["N"], "P": data["P"], "K": data["K"]},
+                optional_nutrients
+            )
+            for entry in top3
+        },
         "soil": soil_health(data["ph"]),
         "suggestions": "Ensure proper irrigation and nutrient balance"
     })
@@ -214,17 +236,19 @@ def predict():
     # crop = model.predict(scaled)[0]
 
     top3 = get_scored_top3_crops(scaled, soil_type, optional_nutrients)
-    fertilizer = fertilizer_advice(float(data["N"]), float(data["P"]), float(data["K"]))
     soil = soil_health(float(data["ph"]))
+    soil_data = {"N": float(data["N"]), "P": float(data["P"]), "K": float(data["K"])}
 
     return jsonify({
         "input": data,
         "crops": top3,
-        "fertilizer": fertilizer,
+        "fertilizer_plans": {
+            entry["crop"]: get_fertilizer_plan(entry["crop"], soil_data, optional_nutrients)
+            for entry in top3
+        },
         "soil": soil,
         "suggestions": "Use organic compost and maintain proper irrigation."
     })
 
 if __name__ == "__main__":
     app.run(debug=True)
-

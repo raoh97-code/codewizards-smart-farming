@@ -298,12 +298,29 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentInputData = null;
   let currentCrops = null;
   let currentFertilizer = null;
+  let currentLang = 'en';
 
   window.translateExplanation = function (lang) {
     if (!currentInputData) return;
+    currentLang = lang;
     const explainContent = document.getElementById('simple-explanation-content');
     if (explainContent) {
       explainContent.innerHTML = generateSimpleExplanation(currentInputData, currentCrops, currentFertilizer, lang);
+    }
+
+    if (currentFertilizer && currentCrops && currentCrops.length > 0) {
+      // Remember which tab was active
+      let activeTabIdx = 0;
+      for (let i = 0; i < 3; i++) {
+        const panel = document.getElementById(`fert-panel-${i}`);
+        if (panel && panel.style.display === 'block') {
+          activeTabIdx = i;
+          break;
+        }
+      }
+
+      renderFertilizerPlans(currentFertilizer, currentCrops, lang);
+      switchFertTab(activeTabIdx);
     }
   };
 
@@ -317,9 +334,12 @@ document.addEventListener('DOMContentLoaded', () => {
         `${displayed} (${confidence}%)`;
     }
 
-    // -- Fertilizer --
-    if (data.fertilizer) {
-      document.getElementById('res-fert').textContent = data.fertilizer;
+    // -- Fertilizer Plans (top-3) --
+    if (data.fertilizer_plans && data.crops && data.crops.length > 0) {
+      document.getElementById('res-fert').textContent = 'Stage-wise plan below \u2193';
+      renderFertilizerPlans(data.fertilizer_plans, data.crops, currentLang);
+    } else {
+      document.getElementById('res-fert').textContent = 'N/A';
     }
 
     // -- Soil Health --
@@ -359,14 +379,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cache current data for translation
     currentInputData = data.input || payloadForDisplay;
     currentCrops = data.crops;
-    currentFertilizer = data.fertilizer;
+    currentFertilizer = data.fertilizer_plans || data.fertilizer || null;
 
     // -- Simple Explanation --
     if (currentInputData && data.crops) {
       const explainCard = document.getElementById('simple-explanation-card');
       const explainContent = document.getElementById('simple-explanation-content');
       if (explainCard && explainContent) {
-        explainContent.innerHTML = generateSimpleExplanation(currentInputData, data.crops, data.fertilizer);
+        explainContent.innerHTML = generateSimpleExplanation(currentInputData, data.crops, data.fertilizer_plans || data.fertilizer);
         explainCard.style.display = 'block';
       }
     }
@@ -434,8 +454,261 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* --------------------------------------------------------
-     SIMPLE EXPLANATION CLASSIFICATIONS & GENERATOR
+     DASHBOARD: Render Fertilizer Plans Block (top-3 crops)
+     Injected into #view-result, tabbed per crop
   -------------------------------------------------------- */
+  const planTranslations = {
+    en: {
+      title: "Fertilizer Plans &mdash; Top 3 Crops",
+      subtitle: "Stage-wise fertilizer schedule based on your soil profile and nutrient deficiencies.",
+      noPlan: "No detailed plan available for",
+      deficiencies: "Deficiencies Detected",
+      stageHeader: "Stage",
+      fertHeader: "Fertilizer",
+      doseHeader: "Dose",
+      timeHeader: "Timing",
+      microNote: "Micronutrient Note:"
+    },
+    hi: {
+      title: "उर्वरक योजनाएं &mdash; शीर्ष 3 फसलें",
+      subtitle: "आपकी मिट्टी प्रोफाइल और पोषक तत्वों की कमी के आधार पर चरण-वार उर्वरक अनुसूची।",
+      noPlan: "इसके लिए कोई विस्तृत योजना उपलब्ध नहीं है:",
+      deficiencies: "कमियां पाई गईं",
+      stageHeader: "चरण",
+      fertHeader: "उर्वरक",
+      doseHeader: "खुराक",
+      timeHeader: "समय",
+      microNote: "सूक्ष्म पोषक तत्व नोट:"
+    },
+    gu: {
+      title: "ખાતર યોજનાઓ &mdash; ટોચના 3 પાક",
+      subtitle: "તમારી માટી પ્રોફાઇલ અને પોષક તત્વોની ખામી પર આધારિત તબક્કાવાર ખાતર સમયપત્રક.",
+      noPlan: "તેના માટે કોઈ વિગતવાર યોજના ઉપલબ્ધ નથી:",
+      deficiencies: "ખામીઓ મળી",
+      stageHeader: "તબક્કો",
+      fertHeader: "ખાતર",
+      doseHeader: "માત્રા",
+      timeHeader: "સમય",
+      microNote: "સૂક્ષ્મ પોષકતત્વો નોંધ:"
+    }
+  };
+
+  const termDict = {
+    'Basal': { hi: 'बुनियादी', gu: 'પાયાનું' },
+    'Tillering': { hi: 'कल्ले निकलना', gu: 'ફૂટ આવવી' },
+    'Panicle': { hi: 'बालियां आना', gu: 'કણસલાં' },
+    'Vegetative': { hi: 'वनस्पतिक', gu: 'વનસ્પતિક' },
+    'Pre-tasseling': { hi: 'मंजरी से पहले', gu: 'મંજરી પહેલાં' },
+    'Flowering': { hi: 'फूल आना', gu: 'ફૂલ આવવા' },
+    'Planting': { hi: 'रोपण', gu: 'રોપાણ' },
+    'Growth': { hi: 'विकास', gu: 'વિકાસ' },
+    'Pre-monsoon': { hi: 'मानसून पूर्व', gu: 'ચોમાસા પહેલાં' },
+    'Post-monsoon': { hi: 'मानसून उपरांत', gu: 'ચોમાસા પછી' },
+    'Dormant': { hi: 'सुप्त', gu: 'સુષુપ્ત' },
+    'Fruiting': { hi: 'फल आना', gu: 'ફળ આવવા' },
+    'Fruit set': { hi: 'फल बनना', gu: 'ફળ બનવા' },
+    'Annual': { hi: 'वार्षिक', gu: 'વાર્ષિક' },
+    'Pruning': { hi: 'कटाई-छंटाई', gu: 'કાપણી' },
+    'Pre-flowering': { hi: 'फूल आने से पहले', gu: 'ફૂલ આવતા પહેલા' },
+    'Before transplanting': { hi: 'रोपाई से पहले', gu: 'રોપણી પહેલાં' },
+    'At sowing': { hi: 'बुवाई के समय', gu: 'વાવણી સમયે' },
+    'Before sowing': { hi: 'बुवाई से पहले', gu: 'વાવણી પહેલાં' },
+    'At planting': { hi: 'रोपण के समय', gu: 'રોપાણ સમયે' },
+    'Monthly': { hi: 'मासिक', gu: 'માસિક' },
+    'After flowering': { hi: 'फूल आने के बाद', gu: 'ફૂલ આવ્યા પછી' },
+    'Before rains': { hi: 'बारिश से पहले', gu: 'વરસાદ પહેલા' },
+    'After rains': { hi: 'बारिश के बाद', gu: 'વરસાદ પછી' },
+    'Winter': { hi: 'सर्दी', gu: 'શિયાળો' },
+    'Spring': { hi: 'वसंत', gu: 'વસંત' },
+    'After pruning': { hi: 'कटाई के बाद', gu: 'કાપણી પછી' },
+    'Before fruiting': { hi: 'फल आने से पहले', gu: 'ફળ આવતા પહેલા' },
+    'After fruit set': { hi: 'फल बनने के बाद', gu: 'ફળ બન્યા પછી' },
+    'Nitrogen low → Increase Urea': { hi: 'नाइट्रोजन कम → यूरिया बढ़ाएं', gu: 'નાઈટ્રોજન ઓછું → યુરિયા વધારો' },
+    'Phosphorus low → Add DAP': { hi: 'फास्फोरस कम → डीएपी डालें', gu: 'ફોસ્ફરસ ઓછું → ડીએપી ઉમેરો' },
+    'Potassium low → Add MOP': { hi: 'पोटेशियम कम → एमओपी डालें', gu: 'પોટેશિયમ ઓછું → એમઓપી ઉમેરો' },
+    'deficiency detected': { hi: 'की कमी पाई गई', gu: 'ની ખામી મળી' },
+    'days': { hi: 'दिन', gu: 'દિવસ' },
+    '/acre': { hi: '/एकड़', gu: '/એકર' },
+    '/plant': { hi: '/पौधा', gu: '/છોડ' },
+    '/tree': { hi: '/पेड़', gu: '/ઝાડ' }
+  };
+
+  function translateTerm(text, lang) {
+    if (!text || lang === 'en') return text;
+    let translated = text;
+    for (const [enTerm, trans] of Object.entries(termDict)) {
+      if (trans[lang]) {
+        const regex = new RegExp(enTerm, 'gi');
+        translated = translated.replace(regex, trans[lang]);
+      }
+    }
+    return translated;
+  }
+
+  function getTranslatedCrop(rawCrop, lang) {
+    const cropTranslations = {
+      'apple': { hi: 'सेब', gu: 'સફરજન' },
+      'banana': { hi: 'केला', gu: 'કેળું' },
+      'blackgram': { hi: 'उड़द', gu: 'અડદ' },
+      'chickpea': { hi: 'चना', gu: 'ચણા' },
+      'coconut': { hi: 'नारियल', gu: 'નાળિયેર' },
+      'coffee': { hi: 'कॉफी', gu: 'કોફી' },
+      'cotton': { hi: 'कपास', gu: 'કપાસ' },
+      'grapes': { hi: 'अंगूर', gu: 'દ્રાક્ષ' },
+      'jute': { hi: 'जूट', gu: 'શણ' },
+      'kidneybeans': { hi: 'राजमा', gu: 'રાજમા' },
+      'lentil': { hi: 'मसूर', gu: 'મસૂર' },
+      'maize': { hi: 'मक्का', gu: 'મકાઈ' },
+      'mango': { hi: 'आम', gu: 'કેરી' },
+      'mothbeans': { hi: 'मोठ दाल', gu: 'મઠ' },
+      'mungbean': { hi: 'मूंग दाल', gu: 'મગ' },
+      'muskmelon': { hi: 'खरबूजा', gu: 'ટેટી' },
+      'orange': { hi: 'संतरा', gu: 'નારંગી' },
+      'papaya': { hi: 'पपीता', gu: 'પપૈયું' },
+      'pigeonpeas': { hi: 'अरहर (तूर)', gu: 'તુવેર' },
+      'pomegranate': { hi: 'अनार', gu: 'દાડમ' },
+      'rice': { hi: 'चावल (धान)', gu: 'ચોખા' },
+      'watermelon': { hi: 'तरबूज', gu: 'તરબૂચ' },
+      'wheat': { hi: 'गेहूँ', gu: 'ઘઉં' },
+      'sugarcane': { hi: 'गन्ना', gu: 'શેરડી' },
+      'soyabeans': { hi: 'सोयाबीन', gu: 'સોયાબીન' },
+      'peas': { hi: 'मटर', gu: 'વટાણા' },
+      'groundnut': { hi: 'मूंगफली', gu: 'મગફળી' }
+    };
+    let name = rawCrop.charAt(0).toUpperCase() + rawCrop.slice(1);
+    if (lang !== 'en' && cropTranslations[rawCrop.toLowerCase()] && cropTranslations[rawCrop.toLowerCase()][lang]) {
+      name = cropTranslations[rawCrop.toLowerCase()][lang];
+    }
+    return name;
+  }
+
+  function renderFertilizerPlans(plans, crops, lang = 'en') {
+    const existing = document.getElementById('fertilizer-plans-block');
+    if (existing) existing.remove();
+
+    const resultSection = document.getElementById('view-result');
+    if (!resultSection) return;
+
+    const block = document.createElement('div');
+    block.id = 'fertilizer-plans-block';
+    block.className = 'card';
+    block.style.marginTop = '20px';
+
+    const t = planTranslations[lang] || planTranslations['en'];
+
+    const TAB_COLORS = [
+      { bg: '#e8f5e9', border: '#4caf50', text: '#2e7d32' },
+      { bg: '#e3f2fd', border: '#2196f3', text: '#1565c0' },
+      { bg: '#fff3e0', border: '#ff9800', text: '#e65100' }
+    ];
+    const MEDALS = ['\uD83E\uDD47', '\uD83E\uDD48', '\uD83E\uDD49'];
+
+    let html = `
+      <h3 style="margin-bottom:5px;">
+        <i class="fa-solid fa-flask"></i> ${t.title}
+      </h3>
+      <p class="text-muted" style="margin-bottom:20px; font-size:0.9rem;">
+        ${t.subtitle}
+      </p>
+      <div style="display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;">`;
+
+    crops.slice(0, 3).forEach((item, i) => {
+      const c = TAB_COLORS[i];
+      const name = getTranslatedCrop(item.crop, lang);
+      html += `
+        <button id="fert-tab-btn-${i}" onclick="switchFertTab(${i})"
+          style="padding:8px 18px; border-radius:20px; border:2px solid ${c.border};
+                 background:${i === 0 ? c.bg : 'white'}; color:${c.text};
+                 font-weight:600; cursor:pointer; font-size:0.9rem; transition:all 0.2s;">
+          ${MEDALS[i]} ${name}
+        </button>`;
+    });
+    html += `</div>`;
+
+    crops.slice(0, 3).forEach((item, i) => {
+      const plan = plans[item.crop];
+      const name = getTranslatedCrop(item.crop, lang);
+      html += `<div id="fert-panel-${i}" style="display:${i === 0 ? 'block' : 'none'};">`;
+
+      if (!plan || plan.message) {
+        html += `<p class="text-muted">${t.noPlan} ${name}.</p>`;
+      } else {
+        // Deficiency warnings
+        if (plan.deficiencies && plan.deficiencies.length > 0) {
+          html += `
+            <div style="background:#fff3e0; border-left:4px solid #ff9800;
+                        border-radius:8px; padding:12px 15px; margin-bottom:18px;">
+              <strong style="color:#e65100;">
+                <i class="fa-solid fa-triangle-exclamation"></i> ${t.deficiencies}
+              </strong>
+              <ul style="margin:8px 0 0 0; padding-left:20px; color:#bf360c;">`;
+          plan.deficiencies.forEach(d => {
+            html += `<li style="margin-bottom:4px;">${translateTerm(d, lang)}</li>`;
+          });
+          html += `</ul></div>`;
+        }
+
+        // Stage-wise table
+        html += `
+          <div style="overflow-x:auto; margin-bottom:15px;">
+            <table style="width:100%; border-collapse:collapse; font-size:0.92rem;">
+              <thead>
+                <tr style="background:#f5f5f5;">
+                  <th style="padding:10px 14px; text-align:left; border-bottom:2px solid #e0e0e0; color:#555;">${t.stageHeader}</th>
+                  <th style="padding:10px 14px; text-align:left; border-bottom:2px solid #e0e0e0; color:#555;">${t.fertHeader}</th>
+                  <th style="padding:10px 14px; text-align:left; border-bottom:2px solid #e0e0e0; color:#555;">${t.doseHeader}</th>
+                  <th style="padding:10px 14px; text-align:left; border-bottom:2px solid #e0e0e0; color:#555;">${t.timeHeader}</th>
+                </tr>
+              </thead>
+              <tbody>`;
+        plan.stages.forEach((s, idx) => {
+          const rowBg = idx % 2 === 0 ? 'white' : '#fafafa';
+          html += `
+                <tr style="background:${rowBg};">
+                  <td style="padding:10px 14px; border-bottom:1px solid #eee; font-weight:600; color:#2e7d32;">${translateTerm(s.stage, lang)}</td>
+                  <td style="padding:10px 14px; border-bottom:1px solid #eee;">${translateTerm(s.fertilizer, lang)}</td>
+                  <td style="padding:10px 14px; border-bottom:1px solid #eee; color:#1565c0;">${translateTerm(s.dose, lang)}</td>
+                  <td style="padding:10px 14px; border-bottom:1px solid #eee; color:#e65100;">${translateTerm(s.timing, lang)}</td>
+                </tr>`;
+        });
+        html += `</tbody></table></div>`;
+
+        // Micronutrient note
+        html += `
+          <div style="background:#e8f5e9; border-left:4px solid #4caf50;
+                      border-radius:8px; padding:12px 15px;">
+            <strong style="color:#2e7d32;">
+              <i class="fa-solid fa-seedling"></i> ${t.microNote}
+            </strong>
+            <span style="color:#424242; margin-left:6px;">${translateTerm(plan.micronutrients, lang)}</span>
+          </div>`;
+      }
+
+      html += `</div>`;  // end panel
+    });
+
+    block.innerHTML = html;
+    resultSection.appendChild(block);
+  }
+
+  window.switchFertTab = function (activeIdx) {
+    const TAB_COLORS = [
+      { bg: '#e8f5e9', border: '#4caf50', text: '#2e7d32' },
+      { bg: '#e3f2fd', border: '#2196f3', text: '#1565c0' },
+      { bg: '#fff3e0', border: '#ff9800', text: '#e65100' }
+    ];
+    for (let i = 0; i < 3; i++) {
+      const panel = document.getElementById(`fert-panel-${i}`);
+      const btn   = document.getElementById(`fert-tab-btn-${i}`);
+      if (panel) panel.style.display = i === activeIdx ? 'block' : 'none';
+      if (btn) {
+        const c = TAB_COLORS[i];
+        btn.style.background = i === activeIdx ? c.bg : 'white';
+      }
+    }
+  };
+
+  
   function classifyNPK(value) {
     if (value < 40) return 'low';
     if (value <= 80) return 'moderate';
@@ -628,15 +901,37 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>`;
     }
 
-    if (fertilizer) {
-      const fertStr = Array.isArray(fertilizer) ? fertilizer.join(', ') : String(fertilizer);
-      const fertLower = fertStr.toLowerCase();
-
+    // Fertilizer action — derived from top crop's plan deficiencies
+    if (fertilizer && typeof fertilizer === 'object' && crops && crops.length > 0) {
+      const topCrop = crops[0].crop.toLowerCase();
+      const plan = fertilizer[topCrop];
+      if (plan && !plan.message) {
+        if (plan.deficiencies && plan.deficiencies.length > 0) {
+          const fertStr = plan.deficiencies.join('; ');
+          explanationHTML += `
+            <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #ff9800;">
+              <p style="margin: 0; font-size: 1.05rem;">
+                \uD83E\uDDEA <strong>${t.action_title}</strong> ${t.action_treat}
+                <span style="background: #ff9800; color: white; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 1rem; margin: 0 4px;">${fertStr}</span> ${t.action_yield}
+              </p>
+            </div>`;
+        } else {
+          explanationHTML += `
+            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #2196f3;">
+              <p style="margin: 0; font-size: 1.05rem;">
+                \u2705 <strong>${t.action_title}</strong>
+                <span style="font-weight: bold; font-size: 1.1rem; color: #1565c0;">${t.action_balanced}</span>
+              </p>
+            </div>`;
+        }
+      }
+    } else if (fertilizer && typeof fertilizer === 'string') {
+      const fertLower = fertilizer.toLowerCase();
       if (fertLower.includes('balanced') || fertLower.includes('optimal') || fertLower === 'none') {
         explanationHTML += `
           <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #2196f3;">
             <p style="margin: 0; font-size: 1.05rem;">
-              ✅ <strong>${t.action_title}</strong> 
+              \u2705 <strong>${t.action_title}</strong>
               <span style="font-weight: bold; font-size: 1.1rem; color: #1565c0;">${t.action_balanced}</span>
             </p>
           </div>`;
@@ -644,8 +939,8 @@ document.addEventListener('DOMContentLoaded', () => {
         explanationHTML += `
           <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #ff9800;">
             <p style="margin: 0; font-size: 1.05rem;">
-              🧪 <strong>${t.action_title}</strong> ${t.action_treat} 
-              <span style="background: #ff9800; color: white; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 1.1rem; margin: 0 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">${fertStr}</span> ${t.action_yield}
+              \uD83E\uDDEA <strong>${t.action_title}</strong> ${t.action_treat}
+              <span style="background: #ff9800; color: white; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 1.1rem; margin: 0 4px;">${fertilizer}</span> ${t.action_yield}
             </p>
           </div>`;
       }
