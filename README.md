@@ -55,7 +55,7 @@ Follow these simple steps to set up the project on your local machine:
 
 ### Setup Steps
 
-**1. Open your terminal and navigate to the backend directory:**
+**1. Open terminal in your System and navigate to the backend directory:**
 ```bash
 cd backend
 ```
