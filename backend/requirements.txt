@@ -7,3 +7,4 @@ pdfkit
 pymongo
 bcrypt
 gunicorn
+dotenv
