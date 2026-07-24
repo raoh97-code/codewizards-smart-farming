@@ -39,8 +39,18 @@ except Exception as e:
     db = users_col = reports_col = None
 
 # Load model & scaler
-model = pickle.load(open("model/model.pkl", "rb"))
-scaler = pickle.load(open("model/scaler.pkl", "rb"))
+# model = pickle.load(open("model/model.pkl", "rb"))
+# scaler = pickle.load(open("model/scaler.pkl", "rb"))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+MODEL_PATH = os.path.join(BASE_DIR, "model", "model.pkl")
+SCALER_PATH = os.path.join(BASE_DIR, "model", "scaler.pkl")
+
+with open(MODEL_PATH, "rb") as f:
+    model = pickle.load(f)
+
+with open(SCALER_PATH, "rb") as f:
+    scaler = pickle.load(f)
 
 # ================================
 # CONFIGURATION
@@ -453,5 +463,7 @@ def generate_pdf():
         }
     )
 
+# if __name__ == "__main__":
+#     app.run(debug=True)
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
