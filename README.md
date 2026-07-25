@@ -2,7 +2,16 @@
 
 CodeWizards Smart Farming is an intelligent web application designed to help farmers make data-driven decisions. By analyzing soil metrics and environmental factors, this system empowers users with customized crop recommendations, detailed fertilizer planning, and soil health analysis.
 
+## 🌐 Live Demo
+
+[![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-smart--farming.onrender.com-brightgreen?style=for-the-badge)](https://smart-farming-fcf6.onrender.com)
+
+> **Try it now:** [https://smart-farming-fcf6.onrender.com](https://smart-farming-fcf6.onrender.com)
+> 
+> ⚠️ *Hosted on Render free tier — the app may take ~30 seconds to wake up on first visit.*
+
 --- 
+
 
 ## ✨ Key Features
 
