@@ -387,9 +387,13 @@ def get_history(email):
 
     return jsonify(reports), 200
 
-config = pdfkit.configuration(
-    wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
-)
+# Auto-detect wkhtmltopdf path (Windows local vs Linux/Render)
+_WKHTMLTOPDF_WIN = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+if os.path.exists(_WKHTMLTOPDF_WIN):
+    config = pdfkit.configuration(wkhtmltopdf=_WKHTMLTOPDF_WIN)
+else:
+    # On Linux (Render), wkhtmltopdf is installed via apt and available in PATH
+    config = pdfkit.configuration()
 
 options = {
     "enable-local-file-access": None,
