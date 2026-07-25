@@ -1,12 +1,16 @@
-# Use official Python slim image
-FROM python:3.11-slim
+# Pin to Debian Bookworm (wkhtmltopdf was dropped from Trixie repos)
+FROM python:3.11-slim-bookworm
 
-# Install system dependencies (wkhtmltopdf + its libs)
+# Install wkhtmltopdf from official prebuilt .deb (not distro repo)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    wkhtmltopdf \
     libxrender1 \
     libxext6 \
     libfontconfig1 \
+    libfreetype6 \
+    wget \
+    && wget -q https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb \
+    && apt-get install -y ./wkhtmltox_0.12.6.1-3.bookworm_amd64.deb \
+    && rm wkhtmltox_0.12.6.1-3.bookworm_amd64.deb \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
